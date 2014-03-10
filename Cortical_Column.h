@@ -49,6 +49,9 @@ public:
 	// get the pointer to the cortical module
 	void	get_Thalamus(Thalamic_Column& T) {Thalamus = &T;}
 
+	// get axonal flux
+	double get_phi		(int N) const {_SWITCH((phi_e)); return var_phi_e;}
+
 	// Initialize the RNGs
 	void 	set_RNG		(void);
 

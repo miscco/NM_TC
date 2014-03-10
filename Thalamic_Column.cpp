@@ -270,11 +270,11 @@ void Thalamic_Column::set_RK (int N) {
 	Phi_rt	[N] = dt*(var_x_rt);
 	Phi_rr	[N] = dt*(var_x_rr);
 	phi_t	[N] = dt*(var_y_t);
-	x_tt  	[N] = dt*(pow(gamma_e, 2) * (noise_xRK(N) 		- var_Phi_tt) - 2 * gamma_e * var_x_tt);
-	x_tr  	[N] = dt*(pow(gamma_e, 2) * (N_tr * get_Qt(N)	- var_Phi_tr) - 2 * gamma_e * var_x_tr);
-	x_rt  	[N] = dt*(pow(gamma_i, 2) * (N_rt * get_Qr(N) 	- var_Phi_rt) - 2 * gamma_i * var_x_rt);
-	x_rr  	[N] = dt*(pow(gamma_i, 2) * (N_rr * get_Qr(N)	- var_Phi_rr) - 2 * gamma_i * var_x_rr);
-	y_t  	[N] = dt*(pow(nu, 	   2) * (		get_Qt(N)	- var_phi_t)  - 2 * nu	 	* var_y_t);
+	x_tt  	[N] = dt*(pow(gamma_e, 2) * (noise_xRK(N) 		+ N_et * Cortex->get_phi(N) 	- var_Phi_tt) - 2 * gamma_e * var_x_tt);
+	x_tr  	[N] = dt*(pow(gamma_e, 2) * (N_tr * get_Qt(N)	+ N_er * Cortex->get_phi(N)	- var_Phi_tr) - 2 * gamma_e * var_x_tr);
+	x_rt  	[N] = dt*(pow(gamma_i, 2) * (N_rt * get_Qr(N) 									- var_Phi_rt) - 2 * gamma_i * var_x_rt);
+	x_rr  	[N] = dt*(pow(gamma_i, 2) * (N_rr * get_Qr(N)									- var_Phi_rr) - 2 * gamma_i * var_x_rr);
+	y_t  	[N] = dt*(pow(nu, 	   2) * (		get_Qt(N)									- var_phi_t)  - 2 * nu	 	* var_y_t);
 }
 /****************************************************************************************************/
 /*										 		end			 										*/

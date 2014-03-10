@@ -55,6 +55,9 @@ public:
 	// change the strength of input
 	void	set_input	(double I) {input = I;}
 
+	// get axonal flux
+	double get_phi		(int N) const {_SWITCH((phi_t)); return var_phi_t;}
+
 	// Initialize the RNGs
 	void 	set_RNG		(void);
 

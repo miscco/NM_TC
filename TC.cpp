@@ -54,8 +54,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	Stim	Stimulation(Thalamus, var_stim);
 
 	// setting up the data containers
-	mxArray* Ve		= SetMexArray(1, T*red);
-	mxArray* Vt		= SetMexArray(1, T*red);
+	mxArray* Ve		= SetMexArray(1, T*res/red);
+	mxArray* Vt		= SetMexArray(1, T*res/red);
 
 	// Pointer to the actual data block
 	double* Pr_Ve	= mxGetPr(Ve);
