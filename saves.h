@@ -3,13 +3,13 @@
 /****************************************************************************************************/
 #pragma once
 #include <iostream>
-#include <vector>
 #include "Cortical_Column.h"
-using std::vector;
+#include "Thalamic_Column.h"
 
 // saving the fluctuations of the populations
-inline void get_data(int counter, Cortical_Column& C, double* Ve) {
-		Ve 	[counter] = Col.Ve	[0];
+inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, double* Ve, double* Vt) {
+	Ve 	[counter] = Cortex.Ve	[0];
+	Vt 	[counter] = Thalamus.Vt	[0];
 }
 /****************************************************************************************************/
 /*										 		end													*/

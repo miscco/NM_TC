@@ -4,15 +4,17 @@
 #pragma once
 #include "Thalamic_Column.h"
 
-class Cortical_Column;
-
+/****************************************************************************************************/
+/*											Stimulation object										*/
+/****************************************************************************************************/
 class Stim {
 public:
 	// empty constructor for compiling
 	Stim(void);
 
-	Stim(double* var)
-	{setup(var);}
+	Stim(Thalamic_Column& T, double* var)
+	{Thalamus = &T;
+	 setup(var);}
 
 	// scaling from SI to simulation variables s -> ms
 	void setup		(double* var_stim) {
@@ -29,8 +31,8 @@ public:
 		// stimulation starts after the onset
 		start 	 = (int)(var_stim[2] + onset) *res;
 
-		// rescale duration with respect to dt
-		duration = (int) var_stim[3]/dt;
+		// rescale duration with respect to dt (res timesteps per sec)
+		duration = (int) var_stim[3]*res/1E3;
 	}
 
 	void check_stim	(int time) {
@@ -49,14 +51,14 @@ public:
 			mode = 0;
 			Thalamus->set_input(0.0);
 
-			// add counter for stimulation occurence
+			// add counter for stimulation occurrence
 			count_stim++ ;
 
 			// reset the stimulation counter
 			count_dur = 0;
 		}
 
-		// if stimulation is on track its duration
+		// if stimulation is on track count its duration
 		if(mode==1){
 			count_dur++;
 		}
@@ -73,7 +75,7 @@ private:
 	// onset until stimulation starts
 	int start = 0;
 
-	// duiration of the stimulation
+	// duration of the stimulation
 	int duration = 0;
 
 	// counter for stimulation events
@@ -85,7 +87,7 @@ private:
 	// Simulation on for TRUE and off for FALSE
 	bool mode = 0;
 
-	// Thalamic column
+	// Pointer to thalamic module
 	Thalamic_Column* Thalamus;
 };
 /****************************************************************************************************/

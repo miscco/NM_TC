@@ -1,24 +1,29 @@
 /****************************************************************************************************/
-/*									C++ main file for code verification								*/
+/*		Main file for compilation tests																*/
+/*		The Simulation requires the following boost libraries:	Preprocessor						*/
+/*																Random								*/
 /****************************************************************************************************/
 #include <iostream>
 #include <ctime>
-#include <vector>
-
 #include "Cortical_Column.h"
 #include "Thalamic_Column.h"
-#include "Stimulation.h"
 #include "ODE.h"
 
-using std::vector;
+/****************************************************************************************************/
+/*										Fixed simulation settings									*/
+/****************************************************************************************************/
+extern const int T 		= 60;
+extern const int res 	= 1E4;
+extern const double dt 	= 1E3/res;
+extern const double h	= sqrt(dt);
+/****************************************************************************************************/
+/*										 		end			 										*/
+/****************************************************************************************************/
 
-extern const int 	T 		= 100;
-extern const int 	onset 	= 5;
-extern const int 	res 	= 1E4;
-extern const double dt 		= 1E3/res;
-extern const double h		= sqrt(dt);
 
-// simulation of the thalamo-cortical model
+/****************************************************************************************************/
+/*										Main simulation routine										*/
+/****************************************************************************************************/
 int main(void) {
 	// Initializing the seeder.
 	srand(time(0));
@@ -27,6 +32,7 @@ int main(void) {
 	Cortical_Column Cortex;
 	Thalamic_Column Thalamus;
 
+	// Connect both modules
 	Cortex.get_Thalamus(Thalamus);
 	Thalamus.get_Cortex(Cortex);
 
@@ -45,7 +51,6 @@ int main(void) {
 	std::cout << "took " << dif 	<< " seconds" << "\n";
 	std::cout << "end\n";
 }
-
 /****************************************************************************************************/
 /*										 		end													*/
 /****************************************************************************************************/
