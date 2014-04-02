@@ -8,9 +8,9 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include "macros.h"
-#include "parameters.h"
 #include "Cortical_Column.h"
 using std::vector;
+
 class Cortical_Column;
 
 /****************************************************************************************************/
@@ -31,22 +31,11 @@ class Thalamic_Column {
 public:
 	// Constructors
 	Thalamic_Column(void)
-	: Vt 	(_INIT(E_L_t)), Vr 	  	(_INIT(E_L_r)),	Ca	  	(_INIT(Ca_0)),
-	  Phi_tt(_INIT(0.0)), 	Phi_tr 	(_INIT(0.0)), 	Phi_rt 	(_INIT(0.0)), 	Phi_rr 	(_INIT(0.0)),  	phi_t	(_INIT(0.0)),
-	  x_tt 	(_INIT(0.0)), 	x_tr   	(_INIT(0.0)), 	x_rt   	(_INIT(0.0)),  	x_rr	(_INIT(0.0)),  	y_t	(_INIT(0.0)),
-	  h_T_t	(_INIT(0.0)),	h_T_r  	(_INIT(0.0)),	m_T_t  	(_INIT(0.0)),	m_T_r	(_INIT(0.0)),
-	  m_h	(_INIT(0.0)),	m_h2	(_INIT(0.0)),	P_h		(_INIT(0.0)),
-	  N_tr 	(210), 		   	N_rt   	(410), 			N_rr 	(800),			input 	(0.0)
 	{set_RNG();}
 
 	// Constructors
 	Thalamic_Column(double* Par)
-	: Vt 	(_INIT(0)), 	Vr 	  	(_INIT(0)), 	Ca	  	(_INIT(Ca_0)),
-	  Phi_tt(_INIT(0.0)), 	Phi_tr 	(_INIT(0.0)), 	Phi_rt 	(_INIT(0.0)), 	Phi_rr 	(_INIT(0.0)),  	phi_t	(_INIT(0.0)),
-	  x_tt 	(_INIT(0.0)), 	x_tr   	(_INIT(0.0)), 	x_rt   	(_INIT(0.0)),  	x_rr	(_INIT(0.0)),  	y_t	(_INIT(0.0)),
-	  h_T_t	(_INIT(0.0)),	h_T_r  	(_INIT(0.0)),	m_T_t  	(_INIT(0.0)),	m_T_r	(_INIT(0.0)),
-	  m_h	(_INIT(0.0)),	m_h2	(_INIT(0.0)),	P_h		(_INIT(0.0)),
-	  N_tr 	(Par[0]), 	   	N_rt	(Par[1]), 		N_rr	(Par[2]),		input 	(0.0)
+	: N_et 		(Par[0]),		N_er	(Par[1])
 	{set_RNG();}
 
 	// get the pointer to the cortical module
@@ -106,43 +95,121 @@ public:
 
 private:
 	// Population variables
-	vector<double> 	Vt,			// TC membrane voltage
-					Vr,			// RE membrane voltage
-					Ca,			// Calcium concentration of TC population
-					Phi_tt,		// PostSP from TC population to TC population
-					Phi_tr,		// PostSP from TC population to RE population
-					Phi_rt,		// PostSP from RE population to TC population
-					Phi_rr,		// PostSP from RE population to RE population
-					phi_t,		// axonal flux
-					x_tt,		// derivative of Phi_tt
-					x_tr,		// derivative of Phi_tr
-					x_rt,		// derivative of Phi_rt
-					x_rr,		// derivative of Phi_rr
-					y_t,		// derivative of phi_t
-					h_T_t,		// inactivation of T channel
-					h_T_r,		// inactivation of T channel
-					m_T_t,		// activation 	of T channel
-					m_T_r,		// activation 	of T channel
-					m_h,		// activation 	of h   channel
-					m_h2,		// activation 	of h   channel bound with protein
-					P_h;		// fraction of protein bound with calcium
-
-	// Connectivities
-	double			N_tr,		// TC to RE loop
-					N_rt,		// RE to TC loop
-					N_rr;		// RE self  loop
-
-	// Noise parameters
-	double 			input;
-
-	// pointer to the cortical module
-	Cortical_Column* 	Cortex;
+	vector<double> 	Vt		= _INIT(E_L_t),		// TC membrane voltage
+					Vr		= _INIT(E_L_r),		// RE membrane voltage
+					Ca		= _INIT(Ca_0),		// Calcium concentration of TC population
+					Phi_tt	= _INIT(0.0),		// PostSP from TC population to TC population
+					Phi_tr	= _INIT(0.0),		// PostSP from TC population to RE population
+					Phi_rt	= _INIT(0.0),		// PostSP from RE population to TC population
+					Phi_rr	= _INIT(0.0),		// PostSP from RE population to RE population
+					phi_t	= _INIT(0.0),		// axonal flux
+					x_tt	= _INIT(0.0),		// derivative of Phi_tt
+					x_tr	= _INIT(0.0),		// derivative of Phi_tr
+					x_rt	= _INIT(0.0),		// derivative of Phi_rt
+					x_rr	= _INIT(0.0),		// derivative of Phi_rr
+					y_t		= _INIT(0.0),		// derivative of phi_t
+					h_T_t	= _INIT(0.0),		// inactivation of T channel
+					h_T_r	= _INIT(0.0),		// inactivation of T channel
+					m_T_t	= _INIT(0.0),		// activation 	of T channel
+					m_T_r	= _INIT(0.0),		// activation 	of T channel
+					m_h		= _INIT(0.0),		// activation 	of h   channel
+					m_h2	= _INIT(0.0),		// activation 	of h   channel bound with protein
+					P_h		= _INIT(0.0);		// fraction of protein bound with calcium
 
 	// Random number generators
 	vector<GEN>		MTRands;
 
 	// Container for noise
 	vector<double>	Rand_vars;
+
+	// Declaration and Initialization of parameters
+	// Membrane time in ms
+	const double 	tau_t 		= 30;
+	const double 	tau_r 		= 30;
+
+	// Maximum firing rate in ms^-1
+	const double 	Qt_max		= 400.E-3;
+	const double 	Qr_max		= 400.E-3;
+
+	// Sigmoid threshold in mV
+	const double 	theta_t		= -45;
+	const double 	theta_r		= -45;
+
+	// Sigmoid gain in mV
+	const double 	sigma_t		= 9;
+	const double 	sigma_r		= 9;
+
+	// Scaling parameter for sigmoidal mapping (dimensionless)
+	const double 	C1          = (3.14159265/sqrt(3));
+
+	// PSP rise time in ms^-1
+	const double 	gamma_e		= 70E-3;
+	const double 	gamma_i		= 58.6E-3;
+
+	/* axonal flux time constant */
+	const double 	nu			= 60E-3;
+
+	// Conductivities in mS/cm^-2
+	// Leak current
+	const double 	g_L_t  		= 0.02;
+	const double 	g_L_r  		= 0.05;
+
+	// Potassium leak current
+	const double 	g_LK_t 		= 0.02;
+	const double 	g_LK_r 		= 0.01;
+
+	// T current
+	const double	g_T_t		= 2.2;
+	const double	g_T_r		= 2;
+
+	/* h current */
+	const double	g_h			= 0.07;
+
+	// Connectivities (dimensionless)
+	const double 	N_tr		= 2;
+	const double 	N_rt		= 5.5;
+	const double 	N_rr		= 5;
+	const double 	N_et		= 10;
+	const double 	N_er		= 10;
+
+	// Reversal potentials in mV
+	// synaptic
+	const double 	E_AMPA  	= 0;
+	const double 	E_GABA  	= -70;
+
+	// Leak
+	const double 	E_L_t 		= -70;
+	const double 	E_L_r 		= -55;
+
+	// Potassium
+	const double 	E_K    		= -100;
+
+	// I_T current
+	const double 	E_Ca    	= 120;
+
+	// I_h current
+	const double 	E_h    		= -40;
+
+	/* Calcium parameters */
+	const double	alpha_Ca	= -50E-6;			// influx per spike in nmol
+	const double	tau_Ca		= 5;				// calcium time constant in ms
+	const double	Ca_0		= 2E-4;				// resting concentration
+
+	/* I_h activation parameters */
+	const double 	k1			= 2.5E7;
+	const double 	k2			= 5E-4;
+	const double 	k3			= 1E-1;
+	const double 	k4			= 1E-3;
+	const double 	n_P			= 4;
+	const double 	g_inc		= 2;
+
+	// Noise parameters in ms^-1
+	const double 	mphi		= 0E-3;
+	const double	dphi		= 2E-3;;
+	double			input		= 0.0;
+
+	/* Pointer to cortical column */
+	Cortical_Column* Cortex;
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

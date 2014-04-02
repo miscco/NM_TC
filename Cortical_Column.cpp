@@ -13,7 +13,7 @@ void Cortical_Column::set_RNG(void) {
 	// get the RNG
 	for (int i=0; i<N; ++i){
 		// add the RNG
-		MTRands.push_back({ENG(rand()), DIST (mphi_c, dphi_c)});
+		MTRands.push_back({ENG(rand()), DIST (mphi, dphi)});
 
 		// get the random number for the first iteration
 		Rand_vars.push_back(MTRands[i]());
@@ -85,14 +85,14 @@ double Cortical_Column::I_ii	(int N) const{
 // Leak current of pyramidal population
 double Cortical_Column::I_L_e	(int N) const{
 	_SWITCH((Ve))
-	double I = gL_e * (var_Ve - E_L_e);
+	double I = g_L * (var_Ve - E_L_e);
 	return I;
 }
 
 // Leak current of inhibitory population
 double Cortical_Column::I_L_i	(int N) const{
 	_SWITCH((Vi))
-	double I = gL_i * (var_Vi - E_L_i);
+	double I = g_L * (var_Vi - E_L_i);
 	return I;
 }
 

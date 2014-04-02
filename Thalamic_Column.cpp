@@ -13,7 +13,7 @@ void Thalamic_Column::set_RNG(void) {
 	// get the RNG
 	for (int i=0; i<N; ++i){
 		// add the RNG
-		MTRands.push_back({ENG(rand()), DIST (mphi_t, dphi_t)});
+		MTRands.push_back({ENG(rand()), DIST (mphi, dphi)});
 
 		// get the random number for the first iteration
 		Rand_vars.push_back(MTRands[i]());
@@ -51,27 +51,27 @@ double Thalamic_Column::get_Qr	(int N) const{
 // excitatory input to TC population
 double Thalamic_Column::I_et	(int N) const{
 	_SWITCH((Vt)(Phi_tt))
-	double psi = g_AMPA * var_Phi_tt * (var_Vt - E_AMPA);
+	double psi = var_Phi_tt * (var_Vt - E_AMPA);
 	return psi;
 }
 
 // inhibitory input to TC population
 double Thalamic_Column::I_it	(int N) const{
 	_SWITCH((Vt)(Phi_rt))
-	double psi = g_GABA * var_Phi_rt * (var_Vt - E_GABA);
+	double psi = var_Phi_rt * (var_Vt - E_GABA);
 	return psi;
 }
 // excitatory input to RE population
 double Thalamic_Column::I_er	(int N) const{
 	_SWITCH((Vr)(Phi_tr))
-	double psi = g_AMPA * var_Phi_tr * (var_Vr - E_AMPA);
+	double psi = var_Phi_tr * (var_Vr - E_AMPA);
 	return psi;
 }
 
 // inhibitory input to RE population
 double Thalamic_Column::I_ir	(int N) const{
 	_SWITCH((Vr)(Phi_rr))
-	double psi = g_GABA * var_Phi_rr * (var_Vr - E_GABA);
+	double psi = var_Phi_rr * (var_Vr - E_GABA);
 	return psi;
 }
 /****************************************************************************************************/
@@ -179,51 +179,51 @@ double Thalamic_Column::tau_m_h	(int N) const{
 // Leak current of TC population
 double Thalamic_Column::I_L_t	(int N) const{
 	_SWITCH((Vt))
-	double I = gL_t * (var_Vt - E_L_t);
+	double I = g_L_t * (var_Vt - E_L_t);
 	return I;
 }
 
 // Potassium leak current of TC population
 double Thalamic_Column::I_LK_t	(int N) const{
 	_SWITCH((Vt))
-	double I = gLK_t * (var_Vt - E_LK_t);
+	double I = g_LK_t * (var_Vt - E_K);
 	return I;
 }
 
 // Leak current of RE population
 double Thalamic_Column::I_L_r	(int N) const{
 	_SWITCH((Vr))
-	double I = gL_r * (var_Vr - E_L_r);
+	double I = g_L_r * (var_Vr - E_L_r);
 	return I;
 }
 
 // Potassium leak current of RE population
 double Thalamic_Column::I_LK_r	(int N) const{
 	_SWITCH((Vr))
-	double I = gLK_r * (var_Vr - E_LK_r);
+	double I = g_LK_r * (var_Vr - E_K);
 	return I;
 }
 
 // T-type current of TC population
 double Thalamic_Column::I_T_t	(int N) const{
-	_SWITCH((Vt)(h_T_t))
-	//double I = gTt * pow(var_m_T_t, 2) * var_h_T_t * (var_Vt - E_Ca);
-	double I = gTt * pow(m_inf_T_t(N), 2) * var_h_T_t * (var_Vt - E_Ca);
+	_SWITCH((Vt)(h_T_t)(m_T_t))
+	double I = g_T_t * pow(var_m_T_t, 2) * var_h_T_t * (var_Vt - E_Ca);
+	//double I = g_T_t * pow(m_inf_T_t(N), 2) * var_h_T_t * (var_Vt - E_Ca);
 	return I;
 }
 
 // T-type current of RE population
 double Thalamic_Column::I_T_r	(int N) const{
 	_SWITCH((Vr)(h_T_r)(m_T_r))
-	double I = gTr * pow(var_m_T_r, 2) * var_h_T_r * (var_Vr - E_Ca);
-	//double I = gTr * pow(m_inf_T_r(N), 2) * var_h_T_r * (var_Vr - E_Ca);
+	double I = g_T_r * pow(var_m_T_r, 2) * var_h_T_r * (var_Vr - E_Ca);
+	//double I = g_T_r * pow(m_inf_T_r(N), 2) * var_h_T_r * (var_Vr - E_Ca);
 	return I;
 }
 
 // h-type current of TC population
 double Thalamic_Column::I_h		(int N) const{
 	_SWITCH((Vt)(m_h)(m_h2))
-	double I = gh * (var_m_h + g_inc * var_m_h2) * (var_Vt - E_h);
+	double I = g_h * (var_m_h + g_inc * var_m_h2) * (var_Vt - E_h);
 	return I;
 }
 /****************************************************************************************************/
@@ -270,11 +270,11 @@ void Thalamic_Column::set_RK (int N) {
 	Phi_rt	[N] = dt*(var_x_rt);
 	Phi_rr	[N] = dt*(var_x_rr);
 	phi_t	[N] = dt*(var_y_t);
-	x_tt  	[N] = dt*(pow(gamma_e, 2) * (noise_xRK(N) 		+ N_et * Cortex->get_phi(N) 	- var_Phi_tt) - 2 * gamma_e * var_x_tt);
+	x_tt  	[N] = dt*(pow(gamma_e, 2) * (noise_xRK(N) 		+ N_et * Cortex->get_phi(N) - var_Phi_tt) - 2 * gamma_e * var_x_tt);
 	x_tr  	[N] = dt*(pow(gamma_e, 2) * (N_tr * get_Qt(N)	+ N_er * Cortex->get_phi(N)	- var_Phi_tr) - 2 * gamma_e * var_x_tr);
-	x_rt  	[N] = dt*(pow(gamma_i, 2) * (N_rt * get_Qr(N) 									- var_Phi_rt) - 2 * gamma_i * var_x_rt);
-	x_rr  	[N] = dt*(pow(gamma_i, 2) * (N_rr * get_Qr(N)									- var_Phi_rr) - 2 * gamma_i * var_x_rr);
-	y_t  	[N] = dt*(pow(nu, 	   2) * (		get_Qt(N)									- var_phi_t)  - 2 * nu	 	* var_y_t);
+	x_rt  	[N] = dt*(pow(gamma_i, 2) * (N_rt * get_Qr(N) 								- var_Phi_rt) - 2 * gamma_i * var_x_rt);
+	x_rr  	[N] = dt*(pow(gamma_i, 2) * (N_rr * get_Qr(N)								- var_Phi_rr) - 2 * gamma_i * var_x_rr);
+	y_t  	[N] = dt*(pow(nu, 	   2) * (		get_Qt(N)								- var_phi_t)  - 2 * nu	 	* var_y_t);
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
