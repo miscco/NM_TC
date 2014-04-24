@@ -4,28 +4,21 @@
 function Plots(T)
 
 if nargin == 0
-    % fittet input
-    Input_N3    = [ 24;         % tau_e
-                    -64;        % theta_e
-                    8.3;          % sigma_e
-                    3.6;        % alpha_Na
-                    2.7;          % tau_Na
-                    0.63;        % g_KNa
-                    50E-3];      % dphi
+    Input_N3    = [ 8.6;        % sigma_e
+                    2.7;        % alpha_Na
+                    3;          % tau_Na
+                    60E-3];     % dphi
                         
                         
-    Input_N2    = [ 30;         % tau_e
-                    -58.5;      % theta_e
-                    4.5;          % sigma_e
+    Input_N2    = [ 4.6;        % sigma_e
                     2;          % alpha_Na
-                    1;          % tau_Na
-                    1.33;       % g_KNa
-                    30E-3];     % dphi
+                    1.2;        % tau_Na
+                    60E-3];     % dphi
 
-    Con     	= [0;		% N_et
-               	   0;		% N_er
-                   0;       % N_te
-                   0];		% N_ti    
+    Con     	= [0;           % N_et
+               	   0;           % N_er
+                   0;           % N_te
+                   0];          % N_ti    
 
     % stimulation parameters
     % first number is the mode of stimulation
@@ -40,7 +33,7 @@ if nargin == 0
                     8;          % time between stimuli          in s    
                     550];       % time until stimuli after min 	in ms
 
-    T       	= 60;  		% duration of the simulation
+    T       	= 30;           % duration of the simulation
 end
 
 [Ve, Vt] = TC(T, Input_N3, Con, var_stim);

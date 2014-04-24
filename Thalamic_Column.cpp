@@ -1,3 +1,25 @@
+/*
+*	Copyright (c) 2014 Michael Schellenberger Costa
+*
+*	Permission is hereby granted, free of charge, to any person obtaining a copy
+*	of this software and associated documentation files (the "Software"), to deal
+*	in the Software without restriction, including without limitation the rights
+*	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+*	copies of the Software, and to permit persons to whom the Software is
+*	furnished to do so, subject to the following conditions:
+*
+*	The above copyright notice and this permission notice shall be included in
+*	all copies or substantial portions of the Software.
+*
+*	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+*	THE SOFTWARE.
+*/
+
 /****************************************************************************************************/
 /*									Functions of the cortical module								*/
 /****************************************************************************************************/
@@ -7,15 +29,15 @@
 /*										 Initialization of RNG 										*/
 /****************************************************************************************************/
 void Thalamic_Column::set_RNG(void) {
-	// the number of independent streams
+	/* Number of independent streams */
 	int N = 2;
 
-	// get the RNG
+	/* Create RNG for each stream */
 	for (int i=0; i<N; ++i){
-		// add the RNG
+		/* Add the RNG */
 		MTRands.push_back({ENG(rand()), DIST (mphi, dphi)});
 
-		// get the random number for the first iteration
+		/* Get the random number for the first iteration */
 		Rand_vars.push_back(MTRands[i]());
 	}
 }
@@ -27,14 +49,14 @@ void Thalamic_Column::set_RNG(void) {
 /****************************************************************************************************/
 /*										 Firing Rate functions 										*/
 /****************************************************************************************************/
-// thalamic relay (TC) firing rate
+/* Thalamic relay (TC) firing rate */
 double Thalamic_Column::get_Qt	(int N) const{
 	_SWITCH((Vt))
 	double q = Qt_max/ (1 + exp(-C1 * (var_Vt - theta_t) / sigma_t));
 	return q;
 }
 
-// thalamic reticular (RE) firing rate
+/* Thalamic reticular (RE) firing rate */
 double Thalamic_Column::get_Qr	(int N) const{
 	_SWITCH((Vr))
 	double q = Qr_max / (1 + exp(-C1 * (var_Vr - theta_r) / sigma_r));
@@ -48,27 +70,27 @@ double Thalamic_Column::get_Qr	(int N) const{
 /****************************************************************************************************/
 /*										Synaptic currents											*/
 /****************************************************************************************************/
-// excitatory input to TC population
+/* Excitatory input to TC population */
 double Thalamic_Column::I_et	(int N) const{
 	_SWITCH((Vt)(Phi_tt))
 	double psi = var_Phi_tt * (var_Vt - E_AMPA);
 	return psi;
 }
 
-// inhibitory input to TC population
+/* Inhibitory input to TC population */
 double Thalamic_Column::I_it	(int N) const{
 	_SWITCH((Vt)(Phi_rt))
 	double psi = var_Phi_rt * (var_Vt - E_GABA);
 	return psi;
 }
-// excitatory input to RE population
+/* Excitatory input to RE population */
 double Thalamic_Column::I_er	(int N) const{
 	_SWITCH((Vr)(Phi_tr))
 	double psi = var_Phi_tr * (var_Vr - E_AMPA);
 	return psi;
 }
 
-// inhibitory input to RE population
+/* Inhibitory input to RE population */
 double Thalamic_Column::I_ir	(int N) const{
 	_SWITCH((Vr)(Phi_rr))
 	double psi = var_Phi_rr * (var_Vr - E_GABA);
@@ -82,64 +104,56 @@ double Thalamic_Column::I_ir	(int N) const{
 /****************************************************************************************************/
 /*										 	I_T gating	 											*/
 /****************************************************************************************************/
-// instant activation in TC population
-// after Destexhe 1996
+/* Activation in TC population after Destexhe 1996 */
 double Thalamic_Column::m_inf_T_t	(int N) const{
 	_SWITCH((Vt))
 	double m = 1/(1+exp(-(var_Vt+59)/6.2));
 	return m;
 }
 
-// instant activation in RE population
-// after Destexhe 1996
+/* Activation in RE population after Destexhe 1996 */
 double Thalamic_Column::m_inf_T_r	(int N) const{
 	_SWITCH((Vr))
 	double m = 1/(1+exp(-(var_Vr+52)/7.2));
 	return m;
 }
 
-// instant deactivation in TC population
-// after Destexhe 1996
+/* Deactivation in TC population after Destexhe 1996 */
 double Thalamic_Column::h_inf_T_t	(int N) const{
 	_SWITCH((Vt))
 	double h = 1/(1+exp( (var_Vt+81)/4));
 	return h;
 }
 
-// instant deactivation in RE population
-// after Destexhe 1996
+/* Deactivation in RE population after Destexhe 1996 */
 double Thalamic_Column::h_inf_T_r	(int N) const{
 	_SWITCH((Vr))
 	double h = 1/(1+exp( (var_Vr+80)/5));
 	return h;
 }
 
-// activation time in TC population
-// after Bazhenov 1998
+/* Activation time in TC population after Bazhenov 1998 */
 double Thalamic_Column::tau_m_T_t	(int N) const{
 	_SWITCH((Vt))
 	double tau = (0.612 + 1 /(exp(-(var_Vt + 132) / 16.7) + exp((var_Vt + 16.8)/18.2)))/pow(3,1.2);
 	return tau;
 }
 
-// activation time in RE population
-// after Destexhe 1996
+/* Activation time in RE population after Destexhe 1996 */
 double Thalamic_Column::tau_m_T_r	(int N) const{
 	_SWITCH((Vr))
 	double tau = (1 + 0.33/( exp((var_Vr+27)/10.0) + exp(-(var_Vr+102)/15.0)))/pow(2.5, 1.2);
 	return tau;
 }
 
-// deactivation time in RE population
-// after Destexhe 1996
+/* deactivation time in RE population after Destexhe 1996 */
 double Thalamic_Column::tau_h_T_t	(int N) const{
 	_SWITCH((Vt))
 	double tau =  (30.8 + (211.4 + exp((var_Vt+115.2)/5))/(1 + exp((var_Vt+86)/3.2)))/pow(3, 1.2);
 	return tau;
 }
 
-// deactivation time in RE population
-// after Destexhe 1996
+/* Deactivation time in RE population after Destexhe 1996 */
 double Thalamic_Column::tau_h_T_r	(int N) const{
 	_SWITCH((Vr))
 	double tau =  (85 + 1/(exp((var_Vr+48)/4) + exp(-(var_Vr+407)/50)))/pow(3, 1.2);
@@ -153,16 +167,14 @@ double Thalamic_Column::tau_h_T_r	(int N) const{
 /****************************************************************************************************/
 /*										 	I_h gating 												*/
 /****************************************************************************************************/
-// instant activation in TC population
-// after Destexhe 1993
+/* Activation in TC population after Destexhe 1993 */
 double Thalamic_Column::m_inf_h	(int N) const{
 	_SWITCH((Vt))
 	double h = 1/(1+exp( (var_Vt+75)/5.5));
 	return h;
 }
 
-// activation time for slow components in TC population
-// after Destexhe 1993
+/* Activation time for slow components in TC population after Destexhe 1993 */
 double Thalamic_Column::tau_m_h	(int N) const{
 	_SWITCH((Vt))
 	double tau = 1. / (exp(-14.59 - 0.086 * var_Vt) + exp(-1.87 + 0.07 * var_Vt));
@@ -176,51 +188,51 @@ double Thalamic_Column::tau_m_h	(int N) const{
 /****************************************************************************************************/
 /*										 Current functions 											*/
 /****************************************************************************************************/
-// Leak current of TC population
+/* Leak current of TC population */
 double Thalamic_Column::I_L_t	(int N) const{
 	_SWITCH((Vt))
 	double I = g_L_t * (var_Vt - E_L_t);
 	return I;
 }
 
-// Potassium leak current of TC population
+/* Potassium leak current of TC population */
 double Thalamic_Column::I_LK_t	(int N) const{
 	_SWITCH((Vt))
 	double I = g_LK_t * (var_Vt - E_K);
 	return I;
 }
 
-// Leak current of RE population
+/* Leak current of RE population */
 double Thalamic_Column::I_L_r	(int N) const{
 	_SWITCH((Vr))
 	double I = g_L_r * (var_Vr - E_L_r);
 	return I;
 }
 
-// Potassium leak current of RE population
+/* Potassium leak current of RE population */
 double Thalamic_Column::I_LK_r	(int N) const{
 	_SWITCH((Vr))
 	double I = g_LK_r * (var_Vr - E_K);
 	return I;
 }
 
-// T-type current of TC population
+/* T-type current of TC population */
 double Thalamic_Column::I_T_t	(int N) const{
 	_SWITCH((Vt)(h_T_t)(m_T_t))
 	double I = g_T_t * pow(var_m_T_t, 2) * var_h_T_t * (var_Vt - E_Ca);
-	//double I = g_T_t * pow(m_inf_T_t(N), 2) * var_h_T_t * (var_Vt - E_Ca);
+	/* double I = g_T_t * pow(m_inf_T_t(N), 2) * var_h_T_t * (var_Vt - E_Ca); */
 	return I;
 }
 
-// T-type current of RE population
+/* T-type current of RE population */
 double Thalamic_Column::I_T_r	(int N) const{
 	_SWITCH((Vr)(h_T_r)(m_T_r))
 	double I = g_T_r * pow(var_m_T_r, 2) * var_h_T_r * (var_Vr - E_Ca);
-	//double I = g_T_r * pow(m_inf_T_r(N), 2) * var_h_T_r * (var_Vr - E_Ca);
+	/* double I = g_T_r * pow(m_inf_T_r(N), 2) * var_h_T_r * (var_Vr - E_Ca); */
 	return I;
 }
 
-// h-type current of TC population
+/* h-type current of TC population */
 double Thalamic_Column::I_h		(int N) const{
 	_SWITCH((Vt)(m_h)(m_h2))
 	double I = g_h * (var_m_h + g_inc * var_m_h2) * (var_Vt - E_h);
@@ -307,7 +319,7 @@ void Thalamic_Column::add_RK(void) {
 	m_h2	[0] += (m_h2	[1] + m_h2		[2] * 2 + m_h2		[3] * 2 + m_h2		[4])/6;
 	P_h	 	[0] += (P_h		[1] + P_h		[2] * 2 + P_h		[3] * 2 + P_h		[4])/6;
 
-	// generating the noise for the next iteration
+	/* Generate noise for the next iteration */
 	for (unsigned i=0; i<Rand_vars.size(); ++i) {
 		Rand_vars[i] = MTRands[i]() + input;
 	}

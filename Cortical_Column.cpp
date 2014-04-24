@@ -1,3 +1,25 @@
+/*
+*	Copyright (c) 2014 Michael Schellenberger Costa
+*
+*	Permission is hereby granted, free of charge, to any person obtaining a copy
+*	of this software and associated documentation files (the "Software"), to deal
+*	in the Software without restriction, including without limitation the rights
+*	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+*	copies of the Software, and to permit persons to whom the Software is
+*	furnished to do so, subject to the following conditions:
+*
+*	The above copyright notice and this permission notice shall be included in
+*	all copies or substantial portions of the Software.
+*
+*	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+*	THE SOFTWARE.
+*/
+
 /****************************************************************************************************/
 /*									Functions of the cortical module								*/
 /****************************************************************************************************/
@@ -7,15 +29,15 @@
 /*										 Initialization of RNG 										*/
 /****************************************************************************************************/
 void Cortical_Column::set_RNG(void) {
-	// the number of independent streams
+	/* Number of independent streams */
 	int N = 4;
 
-	// get the RNG
+	/* Create RNG for each stream */
 	for (int i=0; i<N; ++i){
-		// add the RNG
-		MTRands.push_back({ENG(rand()), DIST (mphi, dphi)});
+		/* Add the RNG */
+		MTRands.push_back({ENG(rand()), DIST (mphi, sqrt(dphi))});
 
-		// get the random number for the first iteration
+		/* Get the random number for the first iteration */
 		Rand_vars.push_back(MTRands[i]());
 	}
 }
@@ -27,14 +49,14 @@ void Cortical_Column::set_RNG(void) {
 /****************************************************************************************************/
 /*										 Firing Rate functions 										*/
 /****************************************************************************************************/
-// pyramidal firing rate
+/* Pyramidal firing rate */
 double Cortical_Column::get_Qe	(int N) const{
 	_SWITCH((Ve))
 	double q = Qe_max / (1 + exp(-C1 * (var_Ve - theta_e) / sigma_e));
 	return q;
 }
 
-// cortical inhibitory firing rate
+/* Inhibitory firing rate */
 double Cortical_Column::get_Qi	(int N) const{
 	_SWITCH((Vi))
 	double q = Qi_max / (1 + exp(-C1 * (var_Vi - theta_i) / sigma_i));
@@ -48,27 +70,27 @@ double Cortical_Column::get_Qi	(int N) const{
 /****************************************************************************************************/
 /*										Synaptic currents											*/
 /****************************************************************************************************/
-// excitatory input to pyramidal population
+/* Excitatory input to pyramidal population */
 double Cortical_Column::I_ee	(int N) const{
 	_SWITCH((Ve)(Phi_ee))
 	double I = var_Phi_ee * (var_Ve - E_AMPA);
 	return I;
 }
 
-// inhibitory input to pyramidal population
+/* Inhibitory input to pyramidal population */
 double Cortical_Column::I_ie	(int N) const{
 	_SWITCH((Ve)(Phi_ie))
 	double I = var_Phi_ie * (var_Ve - E_GABA);
 	return I;
 }
-// excitatory input to inhibitory population
+/* Excitatory input to inhibitory population */
 double Cortical_Column::I_ei	(int N) const{
 	_SWITCH((Vi)(Phi_ei))
 	double I = var_Phi_ei * (var_Vi - E_AMPA);
 	return I;
 }
 
-// inhibitory input to inhibitory population
+/* Inhibitory input to inhibitory population */
 double Cortical_Column::I_ii	(int N) const{
 	_SWITCH((Vi)(Phi_ii))
 	double I = var_Phi_ii * (var_Vi - E_GABA);
@@ -82,21 +104,21 @@ double Cortical_Column::I_ii	(int N) const{
 /****************************************************************************************************/
 /*										 Current functions 											*/
 /****************************************************************************************************/
-// Leak current of pyramidal population
+/* Leak current of pyramidal population */
 double Cortical_Column::I_L_e	(int N) const{
 	_SWITCH((Ve))
 	double I = g_L * (var_Ve - E_L_e);
 	return I;
 }
 
-// Leak current of inhibitory population
+/* Leak current of inhibitory population */
 double Cortical_Column::I_L_i	(int N) const{
 	_SWITCH((Vi))
 	double I = g_L * (var_Vi - E_L_i);
 	return I;
 }
 
-// sodium dependent potassium current
+/* Sodium dependent potassium current */
 double Cortical_Column::I_KNa		(int N)  const{
 	_SWITCH((Ve)(Na))
 	double w_KNa  = 0.37/(1+pow(38.7/var_Na, 3.5));
@@ -180,7 +202,7 @@ void Cortical_Column::add_RK(void) {
 	x_ii  	[0] += (x_ii	[1] + x_ii	[2] * 2 + x_ii	[3] * 2 + x_ii	[4])/6;
 	y_e  	[0] += (y_e		[1] + y_e	[2] * 2 + y_e	[3] * 2 + y_e	[4])/6;
 
-	// generating the noise for the next iteration
+	/* Generat noise for the next iteration */
 	for (unsigned i=0; i<Rand_vars.size(); ++i) {
 		Rand_vars[i] = MTRands[i]();
 	}
