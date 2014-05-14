@@ -263,8 +263,8 @@ double Thalamic_Column::noise_xRK(int N) const{
 void Thalamic_Column::set_RK (int N) {
 	extern const double dt;
 	_SWITCH((Ca)
-			(Phi_tt)(Phi_tr)(Phi_rt)(Phi_rr)(phi_t)
-			(x_tt)	(x_tr)	(x_rt)	(x_rr)	(y_t)
+			(Phi_tt)(Phi_tr)(Phi_rt)(Phi_rr)(phi)
+			(x_tt)	(x_tr)	(x_rt)	(x_rr)	(y)
 			(m_T_t)	(m_T_r)	(h_T_t)	(h_T_r)
 			(m_h)	(m_h2)	(P_h))
 	Vt	  	[N] = dt*(-(I_L_t(N) + I_et(N) + I_it(N))/tau_t - (I_LK_t(N) + I_T_t(N) + I_h(N)));
@@ -281,12 +281,12 @@ void Thalamic_Column::set_RK (int N) {
 	Phi_tr	[N] = dt*(var_x_tr);
 	Phi_rt	[N] = dt*(var_x_rt);
 	Phi_rr	[N] = dt*(var_x_rr);
-	phi_t	[N] = dt*(var_y_t);
+	phi		[N] = dt*(var_y);
 	x_tt  	[N] = dt*(pow(gamma_e, 2) * (noise_xRK(N) 		+ N_et * Cortex->get_phi(N) - var_Phi_tt) - 2 * gamma_e * var_x_tt);
 	x_tr  	[N] = dt*(pow(gamma_e, 2) * (N_tr * get_Qt(N)	+ N_er * Cortex->get_phi(N)	- var_Phi_tr) - 2 * gamma_e * var_x_tr);
 	x_rt  	[N] = dt*(pow(gamma_i, 2) * (N_rt * get_Qr(N) 								- var_Phi_rt) - 2 * gamma_i * var_x_rt);
 	x_rr  	[N] = dt*(pow(gamma_i, 2) * (N_rr * get_Qr(N)								- var_Phi_rr) - 2 * gamma_i * var_x_rr);
-	y_t  	[N] = dt*(pow(nu, 	   2) * (		get_Qt(N)								- var_phi_t)  - 2 * nu	 	* var_y_t);
+	y	  	[N] = dt*(pow(nu, 	   2) * (		get_Qt(N)								- var_phi)	  - 2 * nu	 	* var_y);
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -305,12 +305,12 @@ void Thalamic_Column::add_RK(void) {
 	Phi_tr	[0] += (Phi_tr	[1] + Phi_tr	[2] * 2 + Phi_tr	[3] * 2 + Phi_tr	[4])/6;
 	Phi_rt	[0] += (Phi_rt	[1] + Phi_rt	[2] * 2 + Phi_rt	[3] * 2 + Phi_rt	[4])/6;
 	Phi_rr	[0] += (Phi_rr	[1] + Phi_rr	[2] * 2 + Phi_rr	[3] * 2 + Phi_rr	[4])/6;
-	phi_t	[0] += (phi_t	[1] + phi_t		[2] * 2 + phi_t		[3] * 2 + phi_t		[4])/6;
+	phi		[0] += (phi		[1] + phi		[2] * 2 + phi		[3] * 2 + phi		[4])/6;
 	x_tt  	[0] += (x_tt	[1] + x_tt		[2] * 2 + x_tt		[3] * 2 + x_tt		[4])/6 + pow(gamma_e, 2) * h * Rand_vars[0];
 	x_tr  	[0] += (x_tr	[1] + x_tr		[2] * 2 + x_tr		[3] * 2 + x_tr		[4])/6;
 	x_rt  	[0] += (x_rt	[1] + x_rt		[2] * 2 + x_rt		[3] * 2 + x_rt		[4])/6;
 	x_rr  	[0] += (x_rr	[1] + x_rr		[2] * 2 + x_rr		[3] * 2 + x_rr		[4])/6;
-	y_t  	[0] += (y_t		[1] + y_t		[2] * 2 + y_t		[3] * 2 + y_t		[4])/6;
+	y	  	[0] += (y		[1] + y			[2] * 2 + y			[3] * 2 + y			[4])/6;
 	m_T_t 	[0] += (m_T_t	[1] + m_T_t		[2] * 2 + m_T_t		[3] * 2 + m_T_t		[4])/6;
 	m_T_r 	[0] += (m_T_r	[1] + m_T_r		[2] * 2 + m_T_r		[3] * 2 + m_T_r		[4])/6;
 	h_T_t 	[0] += (h_T_t	[1] + h_T_t		[2] * 2 + h_T_t		[3] * 2 + h_T_t		[4])/6;

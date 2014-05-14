@@ -67,7 +67,7 @@ public:
 	void	set_input	(double I) {input = I;}
 
 	/* Get axonal flux */
-	double get_phi		(int N) const {_SWITCH((phi_t)); return var_phi_t;}
+	double get_phi		(int N) const {_SWITCH((phi)); return var_phi;}
 
 	/* Initialize the RNGs */
 	void 	set_RNG		(void);
@@ -124,12 +124,12 @@ private:
 					Phi_tr	= _INIT(0.0),		/* PostSP from TC population to RE population		*/
 					Phi_rt	= _INIT(0.0),		/* PostSP from RE population to TC population		*/
 					Phi_rr	= _INIT(0.0),		/* PostSP from RE population to RE population		*/
-					phi_t	= _INIT(0.0),		/* axonal flux										*/
+					phi		= _INIT(0.0),		/* axonal flux										*/
 					x_tt	= _INIT(0.0),		/* derivative of Phi_tt								*/
 					x_tr	= _INIT(0.0),		/* derivative of Phi_tr								*/
 					x_rt	= _INIT(0.0),		/* derivative of Phi_rt								*/
 					x_rr	= _INIT(0.0),		/* derivative of Phi_rr								*/
-					y_t		= _INIT(0.0),		/* derivative of phi_t								*/
+					y		= _INIT(0.0),		/* derivative of phi								*/
 					h_T_t	= _INIT(0.0),		/* inactivation of T channel						*/
 					h_T_r	= _INIT(0.0),		/* inactivation of T channel						*/
 					m_T_t	= _INIT(0.0),		/* activation 	of T channel						*/
@@ -154,12 +154,12 @@ private:
 	const double 	Qr_max		= 400.E-3;
 
 	/* Sigmoid threshold in mV */
-	const double 	theta_t		= -45;
-	const double 	theta_r		= -45;
+	const double 	theta_t		= -58.6;
+	const double 	theta_r		= -58.6;
 
 	/* Sigmoid gain in mV */
-	const double 	sigma_t		= 3;
-	const double 	sigma_r		= 3;
+	const double 	sigma_t		= 9;
+	const double 	sigma_r		= 9;
 
 	/* Scaling parameter for sigmoidal mapping (dimensionless) */
 	const double 	C1          = (3.14159265/sqrt(3));
@@ -173,24 +173,24 @@ private:
 
 	/* Conductivities in mS/cm^-2 */
 	/* Leak current */
-	const double 	g_L_t  		= 0.6;
-	const double 	g_L_r  		= 1.5;
+	const double 	g_L_t  		= 1;
+	const double 	g_L_r  		= 1;
 
 	/* Potassium leak current */
 	const double 	g_LK_t 		= 0.02;
 	const double 	g_LK_r 		= 0.02;
 
 	/* T current */
-	const double	g_T_t		= 2.2;
+	const double	g_T_t		= 3;
 	const double	g_T_r		= 2;
 
 	/* h current */
-	const double	g_h			= 0.07;
+	const double	g_h			= 0.04;
 
 	/* Connectivities (dimensionless) */
-	const double 	N_tr		= 2;
-	const double 	N_rt		= 5.5;
-	const double 	N_rr		= 5;
+	const double 	N_tr		= 10;
+	const double 	N_rt		= 10;
+	const double 	N_rr		= 40;
 	const double 	N_et		= 10;
 	const double 	N_er		= 10;
 
@@ -200,8 +200,8 @@ private:
 	const double 	E_GABA  	= -70;
 
 	/* Leak */
-	const double 	E_L_t 		= -64;
-	const double 	E_L_r 		= -64;
+	const double 	E_L_t 		= -70;
+	const double 	E_L_r 		= -70;
 
 	/* Potassium */
 	const double 	E_K    		= -100;
@@ -210,11 +210,11 @@ private:
 	const double 	E_Ca    	= 120;
 
 	/* I_h current */
-	const double 	E_h    		= -40;
+	const double 	E_h    		= -43;
 
 	/* Calcium parameters */
 	const double	alpha_Ca	= -50E-6;			/* influx per spike in nmol		*/
-	const double	tau_Ca		= 5;				/* calcium time constant in ms	*/
+	const double	tau_Ca		= 10;				/* calcium time constant in ms	*/
 	const double	Ca_0		= 2E-4;				/* resting concentration 		*/
 
 	/* I_h activation parameters */
@@ -227,7 +227,7 @@ private:
 
 	/* Noise parameters in ms^-1 */
 	const double 	mphi		= 0E-3;
-	const double	dphi		= 2E-3;;
+	const double	dphi		= 10E-3;;
 	double			input		= 0.0;
 
 	/* Pointer to cortical column */

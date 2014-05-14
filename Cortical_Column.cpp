@@ -162,8 +162,8 @@ double Cortical_Column::noise_xRK(int N, int M) const{
 /****************************************************************************************************/
 void Cortical_Column::set_RK (int N) {
 	extern const double dt;
-	_SWITCH((Phi_ee)(Phi_ei)(Phi_ie)(Phi_ii)(phi_e)
-			(x_ee) 	(x_ei)	(x_ie)	(x_ii)	(y_e))
+	_SWITCH((Phi_ee)(Phi_ei)(Phi_ie)(Phi_ii)(phi)
+			(x_ee) 	(x_ei)	(x_ie)	(x_ii)	(y))
 	Ve	  	[N] = dt*(-(I_L_e(N) + I_ee(N) + I_ie(N))/tau_e - I_KNa(N));
 	Vi	  	[N] = dt*(-(I_L_i(N) + I_ei(N) + I_ii(N))/tau_i);
 	Na		[N] = dt*(alpha_Na * get_Qe(N) - Na_pump(N))/tau_Na;
@@ -171,12 +171,12 @@ void Cortical_Column::set_RK (int N) {
 	Phi_ei	[N] = dt*(var_x_ei);
 	Phi_ie	[N] = dt*(var_x_ie);
 	Phi_ii	[N] = dt*(var_x_ii);
-	phi_e	[N] = dt*(var_y_e);
+	phi		[N] = dt*(var_y);
 	x_ee  	[N] = dt*(pow(gamma_e, 2) * (N_ee * get_Qe(N) + noise_xRK(N, 0)	+ N_te * Thalamus->get_phi(N)	- var_Phi_ee) - 2 * gamma_e * var_x_ee);
 	x_ei  	[N] = dt*(pow(gamma_e, 2) * (N_ei * get_Qe(N) + noise_xRK(N, 1)	+ N_ti * Thalamus->get_phi(N)	- var_Phi_ei) - 2 * gamma_e * var_x_ei);
 	x_ie  	[N] = dt*(pow(gamma_i, 2) * (N_ie * get_Qi(N) 			  										- var_Phi_ie) - 2 * gamma_i * var_x_ie);
 	x_ii  	[N] = dt*(pow(gamma_i, 2) * (N_ii * get_Qi(N)		 	  										- var_Phi_ii) - 2 * gamma_i * var_x_ii);
-	y_e  	[N] = dt*(pow(nu, 	   2) * (		get_Qe(N)													- var_phi_e)  - 2 * nu	 	* var_y_e);
+	y	  	[N] = dt*(pow(nu, 	   2) * (		get_Qe(N)													- var_phi)	  - 2 * nu	 	* var_y);
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -195,12 +195,12 @@ void Cortical_Column::add_RK(void) {
 	Phi_ei	[0] += (Phi_ei	[1] + Phi_ei[2] * 2 + Phi_ei[3] * 2 + Phi_ei[4])/6;
 	Phi_ie	[0] += (Phi_ie	[1] + Phi_ie[2] * 2 + Phi_ie[3] * 2 + Phi_ie[4])/6;
 	Phi_ii	[0] += (Phi_ii	[1] + Phi_ii[2] * 2 + Phi_ii[3] * 2 + Phi_ii[4])/6;
-	phi_e	[0] += (phi_e	[1] + phi_e	[2] * 2 + phi_e	[3] * 2 + phi_e	[4])/6;
+	phi		[0] += (phi		[1] + phi	[2] * 2 + phi	[3] * 2 + phi	[4])/6;
 	x_ee  	[0] += (x_ee	[1] + x_ee	[2] * 2 + x_ee	[3] * 2 + x_ee	[4])/6 + pow(gamma_e, 2) * h * Rand_vars[0];
 	x_ei  	[0] += (x_ei	[1] + x_ei	[2] * 2 + x_ei	[3] * 2 + x_ei	[4])/6 + pow(gamma_e, 2) * h * Rand_vars[2];
 	x_ie  	[0] += (x_ie	[1] + x_ie	[2] * 2 + x_ie	[3] * 2 + x_ie	[4])/6;
 	x_ii  	[0] += (x_ii	[1] + x_ii	[2] * 2 + x_ii	[3] * 2 + x_ii	[4])/6;
-	y_e  	[0] += (y_e		[1] + y_e	[2] * 2 + y_e	[3] * 2 + y_e	[4])/6;
+	y	 	[0] += (y		[1] + y		[2] * 2 + y		[3] * 2 + y		[4])/6;
 
 	/* Generat noise for the next iteration */
 	for (unsigned i=0; i<Rand_vars.size(); ++i) {

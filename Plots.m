@@ -4,15 +4,17 @@
 function Plots(T)
 
 if nargin == 0
-    Input_N3    = [ 8.6;        % sigma_e
-                    2.7;        % alpha_Na
+    Input_N3    = [ 8.7;          % sigma_e
+                    2.6;        % alpha_Na
                     3;          % tau_Na
+                    1.6;        % g_KNa
                     60E-3];     % dphi
                         
                         
     Input_N2    = [ 4.6;        % sigma_e
                     2;          % alpha_Na
                     1.2;        % tau_Na
+                    1.33;       % g_KNa
                     60E-3];     % dphi
 
     Con     	= [0;           % N_et

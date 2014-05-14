@@ -55,7 +55,8 @@ public:
 	{set_RNG();}
 
 	Cortical_Column(double* Par, double* Con)
-	 :sigma_e 	(Par[0]),	alpha_Na 	(Par[1]),	  tau_Na	(Par[2]),	  dphi		(Par[3]),
+	 :sigma_e 	(Par[0]),	alpha_Na 	(Par[1]),	  tau_Na	(Par[2]),	  g_KNa		(Par[3]),
+	  dphi		(Par[3]),
 	  N_te		(Con[2]),	N_ti		(Con[3])
 	{set_RNG();}
 
@@ -63,7 +64,7 @@ public:
 	void	get_Thalamus(Thalamic_Column& T) {Thalamus = &T;}
 
 	/* Return axonal flux */
-	double 	get_phi		(int N) const {_SWITCH((phi_e)); return var_phi_e;}
+	double 	get_phi		(int N) const {_SWITCH((phi)); return var_phi;}
 
 	/* Initialize the RNGs */
 	void 	set_RNG		(void);
@@ -106,12 +107,12 @@ private:
 					Phi_ei	= _INIT(0.0),		/* PostSP from excitatory to inhibitory population	*/
 					Phi_ie	= _INIT(0.0),		/* PostSP from inhibitory to excitatory population	*/
 					Phi_ii	= _INIT(0.0),		/* PostSP from inhibitory to inhibitory population	*/
-					phi_e	= _INIT(0.0),		/* axonal flux										*/
+					phi		= _INIT(0.0),		/* axonal flux										*/
 					x_ee	= _INIT(0.0),		/* derivative of Phi_ee								*/
 					x_ei	= _INIT(0.0),		/* derivative of Phi_ei								*/
 					x_ie	= _INIT(0.0),		/* derivative of Phi_ie				 				*/
 					x_ii	= _INIT(0.0),		/* derivative of Phi_ii 							*/
-					y_e		= _INIT(0.0);		/* derivative of phi_t 								*/
+					y		= _INIT(0.0);		/* derivative of phi 								*/
 
 	/* Random number generators */
 	vector<GEN>		MTRands;
