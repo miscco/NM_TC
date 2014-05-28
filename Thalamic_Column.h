@@ -67,7 +67,7 @@ public:
 	void	set_input	(double I) {input = I;}
 
 	/* Get axonal flux */
-	double get_phi		(int N) const {_SWITCH((phi)); return var_phi;}
+	double 	get_phi		(int N) const {_SWITCH((phi)); return var_phi;}
 
 	/* Initialize the RNGs */
 	void 	set_RNG		(void);
@@ -85,8 +85,6 @@ public:
 	/* Activation functions */
 	double  m_inf_T_t	(int) const;
 	double  m_inf_T_r	(int) const;
-	double  tau_m_T_t	(int) const;
-	double  tau_m_T_r	(int) const;
 	double  m_inf_h		(int) const;
 	double  tau_m_h		(int) const;
 
@@ -132,8 +130,6 @@ private:
 					y		= _INIT(0.0),		/* derivative of phi								*/
 					h_T_t	= _INIT(0.0),		/* inactivation of T channel						*/
 					h_T_r	= _INIT(0.0),		/* inactivation of T channel						*/
-					m_T_t	= _INIT(0.0),		/* activation 	of T channel						*/
-					m_T_r	= _INIT(0.0),		/* activation 	of T channel						*/
 					m_h		= _INIT(0.0),		/* activation 	of h   channel						*/
 					m_h2	= _INIT(0.0),		/* activation 	of h   channel bound with protein 	*/
 					P_h		= _INIT(0.0);		/* fraction of protein bound with calcium 			*/
@@ -146,8 +142,8 @@ private:
 
 	/* Declaration and Initialization of parameters */
 	/* Membrane time in ms */
-	const double 	tau_t 		= 30;
-	const double 	tau_r 		= 30;
+	const double 	tau_t 		= 20;
+	const double 	tau_r 		= 20;
 
 	/* Maximum firing rate in ms^-1 */
 	const double 	Qt_max		= 400.E-3;
@@ -158,8 +154,8 @@ private:
 	const double 	theta_r		= -58.6;
 
 	/* Sigmoid gain in mV */
-	const double 	sigma_t		= 9;
-	const double 	sigma_r		= 9;
+	const double 	sigma_t		= 2;
+	const double 	sigma_r		= 2;
 
 	/* Scaling parameter for sigmoidal mapping (dimensionless) */
 	const double 	C1          = (3.14159265/sqrt(3));
@@ -177,7 +173,7 @@ private:
 	const double 	g_L_r  		= 1;
 
 	/* Potassium leak current */
-	const double 	g_LK_t 		= 0.02;
+	const double 	g_LK_t 		= 0.025;
 	const double 	g_LK_r 		= 0.02;
 
 	/* T current */
@@ -185,14 +181,7 @@ private:
 	const double	g_T_r		= 2;
 
 	/* h current */
-	const double	g_h			= 0.04;
-
-	/* Connectivities (dimensionless) */
-	const double 	N_tr		= 10;
-	const double 	N_rt		= 10;
-	const double 	N_rr		= 40;
-	const double 	N_et		= 10;
-	const double 	N_er		= 10;
+	const double	g_h			= 0.07;
 
 	/* Reversal potentials in mV */
 	/* Synaptic */
@@ -229,6 +218,14 @@ private:
 	const double 	mphi		= 0E-3;
 	const double	dphi		= 10E-3;;
 	double			input		= 0.0;
+
+
+	/* Connectivities (dimensionless) */
+	const double 	N_tr		= 5;
+	const double 	N_rt		= 5;
+	const double 	N_rr		= 50;
+	const double 	N_et		= 10;
+	const double 	N_er		= 10;
 
 	/* Pointer to cortical column */
 	Cortical_Column* Cortex;

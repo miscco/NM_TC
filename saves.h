@@ -32,8 +32,8 @@
 /*											Save data												*/
 /****************************************************************************************************/
 inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, double* Ve, double* Vt) {
-	Ve 	[counter] = Cortex.Ve	[0];
-	Vt 	[counter] = Thalamus.Vt	[0];
+	Ve 	[counter] = Cortex.Ve		[0];
+	Vt 	[counter] = Thalamus.Vt		[0];
 }
 /****************************************************************************************************/
 /*										 		end													*/

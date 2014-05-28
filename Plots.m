@@ -17,10 +17,10 @@ if nargin == 0
                     1.33;       % g_KNa
                     60E-3];     % dphi
 
-    Con     	= [0;           % N_et
-               	   0;           % N_er
-                   0;           % N_te
-                   0];          % N_ti    
+    Connectivity= [2;           % N_et
+               	   2;           % N_er
+                   5;           % N_te
+                   5];          % N_ti    
 
     % stimulation parameters
     % first number is the mode of stimulation
@@ -29,16 +29,16 @@ if nargin == 0
     % 2 == phase dependend up state
     % 3 == phase dependend down state
     
-    var_stim    = [ 0           % mode of stimulation
-                    100.0;      % strength of the stimulus      in Hz (spikes per second)
-                    100;       	% duration of the stimulus      in ms
-                    8;          % time between stimuli          in s    
-                    550];       % time until stimuli after min 	in ms
+    var_stim    = [ 0;          % mode of stimulation
+                    0;          % strength of the stimulus      in Hz (spikes per second)
+                    0;       	% duration of the stimulus      in ms
+                    0;          % time between stimuli          in s    
+                    0];         % time until stimuli after min 	in ms
 
     T       	= 30;           % duration of the simulation
 end
 
-[Ve, Vt] = TC(T, Input_N3, Con, var_stim);
+[Ve, Vt] = TC(T, Input_N2, Connectivity, var_stim);
 
 L        = max(size(Vt));
 timeaxis = linspace(0,T,L);

@@ -32,8 +32,8 @@
 #include "Thalamic_Column.h"
 #include "macros.h"
 using std::vector;
-class Thalamic_Column;
 
+class Thalamic_Column;
 /****************************************************************************************************/
 /*										Typedefs for RNG											*/
 /****************************************************************************************************/
@@ -56,7 +56,7 @@ public:
 
 	Cortical_Column(double* Par, double* Con)
 	 :sigma_e 	(Par[0]),	alpha_Na 	(Par[1]),	  tau_Na	(Par[2]),	  g_KNa		(Par[3]),
-	  dphi		(Par[3]),
+	  dphi		(Par[4]),
 	  N_te		(Con[2]),	N_ti		(Con[3])
 	{set_RNG();}
 
@@ -142,7 +142,7 @@ private:
 
 	/* parameters of the firing adaption */
 	const double 	alpha_Na	= 2;			/* Sodium influx per spike			in mM ms 	*/
-	const double 	tau_Na		= 1;			/* Sodium time constant 			in ms 		*/
+	const double 	tau_Na		= 1.2;			/* Sodium time constant 			in ms 		*/
 
 	const double 	R_pump   	= 0.09;        	/* Na-K pump  constant              in mM/ms 	*/
 	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration              in mM 		*/
@@ -183,8 +183,8 @@ private:
 	const double 	N_ei		= 72;
 	const double 	N_ie		= 90;
 	const double 	N_ii		= 90;
-	const double 	N_te		= 10;
-	const double 	N_ti		= 10;
+	const double 	N_te		= 0;
+	const double 	N_ti		= 0;
 
 	/* Pointer to thalamic column */
 	Thalamic_Column* Thalamus;

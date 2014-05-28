@@ -132,21 +132,7 @@ double Thalamic_Column::h_inf_T_r	(int N) const{
 	return h;
 }
 
-/* Activation time in TC population after Bazhenov 1998 */
-double Thalamic_Column::tau_m_T_t	(int N) const{
-	_SWITCH((Vt))
-	double tau = (0.612 + 1 /(exp(-(var_Vt + 132) / 16.7) + exp((var_Vt + 16.8)/18.2)))/pow(3,1.2);
-	return tau;
-}
-
-/* Activation time in RE population after Destexhe 1996 */
-double Thalamic_Column::tau_m_T_r	(int N) const{
-	_SWITCH((Vr))
-	double tau = (1 + 0.33/( exp((var_Vr+27)/10.0) + exp(-(var_Vr+102)/15.0)))/pow(2.5, 1.2);
-	return tau;
-}
-
-/* deactivation time in RE population after Destexhe 1996 */
+/* Deactivation time in RE population after Destexhe 1996 */
 double Thalamic_Column::tau_h_T_t	(int N) const{
 	_SWITCH((Vt))
 	double tau =  (30.8 + (211.4 + exp((var_Vt+115.2)/5))/(1 + exp((var_Vt+86)/3.2)))/pow(3, 1.2);
@@ -218,17 +204,15 @@ double Thalamic_Column::I_LK_r	(int N) const{
 
 /* T-type current of TC population */
 double Thalamic_Column::I_T_t	(int N) const{
-	_SWITCH((Vt)(h_T_t)(m_T_t))
-	double I = g_T_t * pow(var_m_T_t, 2) * var_h_T_t * (var_Vt - E_Ca);
-	/* double I = g_T_t * pow(m_inf_T_t(N), 2) * var_h_T_t * (var_Vt - E_Ca); */
+	_SWITCH((Vt)(h_T_t))
+	double I = g_T_t * pow(m_inf_T_t(N), 2) * var_h_T_t * (var_Vt - E_Ca);
 	return I;
 }
 
 /* T-type current of RE population */
 double Thalamic_Column::I_T_r	(int N) const{
-	_SWITCH((Vr)(h_T_r)(m_T_r))
-	double I = g_T_r * pow(var_m_T_r, 2) * var_h_T_r * (var_Vr - E_Ca);
-	/* double I = g_T_r * pow(m_inf_T_r(N), 2) * var_h_T_r * (var_Vr - E_Ca); */
+	_SWITCH((Vr)(h_T_r))
+	double I = g_T_r * pow(m_inf_T_r(N), 2) * var_h_T_r * (var_Vr - E_Ca);
 	return I;
 }
 
@@ -265,13 +249,11 @@ void Thalamic_Column::set_RK (int N) {
 	_SWITCH((Ca)
 			(Phi_tt)(Phi_tr)(Phi_rt)(Phi_rr)(phi)
 			(x_tt)	(x_tr)	(x_rt)	(x_rr)	(y)
-			(m_T_t)	(m_T_r)	(h_T_t)	(h_T_r)
+			(h_T_t)	(h_T_r)
 			(m_h)	(m_h2)	(P_h))
 	Vt	  	[N] = dt*(-(I_L_t(N) + I_et(N) + I_it(N))/tau_t - (I_LK_t(N) + I_T_t(N) + I_h(N)));
 	Vr	  	[N] = dt*(-(I_L_r(N) + I_er(N) + I_ir(N))/tau_r - (I_LK_r(N) + I_T_r(N)));
 	Ca		[N] = dt*(alpha_Ca * I_T_t(N) - (var_Ca - Ca_0)/tau_Ca);
-	m_T_t 	[N] = dt*(m_inf_T_t(N) - var_m_T_t)/tau_m_T_t(N);
-	m_T_r 	[N] = dt*(m_inf_T_r(N) - var_m_T_r)/tau_m_T_r(N);
 	h_T_t 	[N] = dt*(h_inf_T_t(N) - var_h_T_t)/tau_h_T_t(N);
 	h_T_r 	[N] = dt*(h_inf_T_r(N) - var_h_T_r)/tau_h_T_r(N);
 	m_h 	[N] = dt*((m_inf_h(N) * (1 - var_m_h2) - var_m_h)/tau_m_h(N) - k3 * var_P_h * var_m_h + k4 * var_m_h2);
@@ -311,8 +293,6 @@ void Thalamic_Column::add_RK(void) {
 	x_rt  	[0] += (x_rt	[1] + x_rt		[2] * 2 + x_rt		[3] * 2 + x_rt		[4])/6;
 	x_rr  	[0] += (x_rr	[1] + x_rr		[2] * 2 + x_rr		[3] * 2 + x_rr		[4])/6;
 	y	  	[0] += (y		[1] + y			[2] * 2 + y			[3] * 2 + y			[4])/6;
-	m_T_t 	[0] += (m_T_t	[1] + m_T_t		[2] * 2 + m_T_t		[3] * 2 + m_T_t		[4])/6;
-	m_T_r 	[0] += (m_T_r	[1] + m_T_r		[2] * 2 + m_T_r		[3] * 2 + m_T_r		[4])/6;
 	h_T_t 	[0] += (h_T_t	[1] + h_T_t		[2] * 2 + h_T_t		[3] * 2 + h_T_t		[4])/6;
 	h_T_r 	[0] += (h_T_r	[1] + h_T_r		[2] * 2 + h_T_r		[3] * 2 + h_T_r		[4])/6;
 	m_h		[0] += (m_h		[1] + m_h		[2] * 2 + m_h		[3] * 2 + m_h		[4])/6;
