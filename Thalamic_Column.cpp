@@ -249,8 +249,7 @@ void Thalamic_Column::set_RK (int N) {
 	_SWITCH((Ca)
 			(Phi_tt)(Phi_tr)(Phi_rt)(Phi_rr)(phi)
 			(x_tt)	(x_tr)	(x_rt)	(x_rr)	(y)
-			(h_T_t)	(h_T_r)
-			(m_h)	(m_h2)	(P_h))
+			(h_T_t)	(h_T_r)	(m_h)	(m_h2)	(P_h))
 	Vt	  	[N] = dt*(-(I_L_t(N) + I_et(N) + I_it(N))/tau_t - (I_LK_t(N) + I_T_t(N) + I_h(N)));
 	Vr	  	[N] = dt*(-(I_L_r(N) + I_er(N) + I_ir(N))/tau_r - (I_LK_r(N) + I_T_r(N)));
 	Ca		[N] = dt*(alpha_Ca * I_T_t(N) - (var_Ca - Ca_0)/tau_Ca);

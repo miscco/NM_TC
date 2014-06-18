@@ -165,7 +165,7 @@ private:
 	const double 	gamma_i		= 58.6E-3;
 
 	/* axonal flux time constant */
-	const double 	nu			= 120E-3;
+	const double 	nu			= 60E-3;
 
 	/* Conductivities in mS/cm^-2 */
 	/* Leak current */
@@ -216,7 +216,7 @@ private:
 
 	/* Noise parameters in ms^-1 */
 	const double 	mphi		= 0E-3;
-	const double	dphi		= 10E-3;;
+	const double	dphi		= 20E-3;;
 	double			input		= 0.0;
 
 

@@ -17,10 +17,10 @@ if nargin == 0
                     1.33;       % g_KNa
                     60E-3];     % dphi
 
-    Connectivity= [2;           % N_et
-               	   2;           % N_er
-                   5;           % N_te
-                   5];          % N_ti    
+    Connectivity= [3;           % N_et
+               	   3;           % N_er
+                   15;           % N_te
+                   20];          % N_ti    
 
     % stimulation parameters
     % first number is the mode of stimulation
@@ -30,9 +30,9 @@ if nargin == 0
     % 3 == phase dependend down state
     
     var_stim    = [ 0;          % mode of stimulation
-                    0;          % strength of the stimulus      in Hz (spikes per second)
-                    0;       	% duration of the stimulus      in ms
-                    0;          % time between stimuli          in s    
+                    30;          % strength of the stimulus      in Hz (spikes per second)
+                    50;       	% duration of the stimulus      in ms
+                    5;          % time between stimuli          in s    
                     0];         % time until stimuli after min 	in ms
 
     T       	= 30;           % duration of the simulation

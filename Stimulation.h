@@ -195,15 +195,13 @@ public:
 	}
 
 private:
-
-	/* Stimulation parameters */
 	/* Stimulation strength */
 	double strength 	= 0.0;
 
 	/* Duration of the stimulation */
 	int duration 		= 500;
 
-	/* Inter stimulus intervall in case of periodic stimulation */
+	/* Inter-stimulus-interval in case of periodic stimulation */
 	int ISI				= 5E4;
 
 	/* Threshold for phase dependent stimulation */
@@ -229,7 +227,7 @@ private:
 	/* Minimum found */
 	bool minimum_found		= false;
 
-	/* Onset in timesteps to correct the given time of the markers */
+	/* Onset in time steps to correct the given time of the markers */
 	int correction			= 10000;
 
 	/* Counter for stimulation duration */

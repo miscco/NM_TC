@@ -20,13 +20,13 @@
 *	THE SOFTWARE.
 */
 
-/********************************************************************************************************/
-/* 	Implementation of the simulation as MATLAB routine (mex compiler)									*/
-/* 	mex command is given by:																			*/
-/* 	mex CXXFLAGS="\$CXXFLAGS -std=gnu++0x -fpermissive" TC.cpp Cortical_Column.cpp Thalamic_Column.cpp	*/
-/*	The Simulation requires the following boost libraries:	Preprocessor								*/
-/*															Random										*/
-/********************************************************************************************************/
+/****************************************************************************************************/
+/* 	Implementation of the simulation as MATLAB routine (mex compiler)								*/
+/* 	mex command is given by:																		*/
+/* 	mex CXXFLAGS="\$CXXFLAGS -std=c++0x" TC.cpp Cortical_Column.cpp Thalamic_Column.cpp				*/
+/*	The Simulation requires the following boost libraries:	Preprocessor							*/
+/*															Random									*/
+/****************************************************************************************************/
 #include <ctime>
 #include "mex.h"
 #include "matrix.h"

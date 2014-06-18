@@ -152,7 +152,7 @@ private:
 	const double 	gamma_i		= 58.6E-3;
 
 	/* Axonal flux time constant */
-	const double 	nu			= 120E-3;
+	const double 	nu			= 60E-3;
 
 	/* Conductivities in mS/cm^-2 */
 	/* Leak */
