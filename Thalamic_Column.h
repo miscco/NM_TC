@@ -181,7 +181,7 @@ private:
 	const double	g_T_r		= 2;
 
 	/* h current */
-	const double	g_h			= 0.07;
+	const double	g_h			= 0.06;
 
 	/* Reversal potentials in mV */
 	/* Synaptic */
