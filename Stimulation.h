@@ -49,20 +49,23 @@ public:
 		/* Mode of stimulation */
 		mode		= (int) var_stim[0];
 
-		/* Scale the stimulation strength from s^-1 to ms^-1 */
+		/* Scale the stimulation strength from s^-1 (Hz) to ms^-1 */
 		strength 	= 		var_stim[1] / 1000;
 
 		/* Scale duration from ms to dt */
 		duration 	= (int) var_stim[2] * res / 1000;
 
-		/* Scale the ISI from s to ms^-1 */
+		/* Scale the ISI from s to ms */
 		ISI 		= (int) var_stim[3] * res;
 
 		/* Scale time to stimulus from ms to dt */
 		time_to_stim= (int) var_stim[4] * res / 1000;
 
+		/* Set the onset correction for the marker */
+		correction = onset * res;
+
 		if(mode==1) {
-			time_to_stim = (onset+1) * res;
+			time_to_stim = (int) (onset+1) * res;
 		}
 
 		correction = onset * res;
@@ -80,7 +83,7 @@ public:
 
 		/* Periodic stimulation */
 		case 1:
-			/* Check if time is reached */
+			/* Check if stimulation time is reached */
 			if(time == time_to_stim) {
 				/* Switch stimulation on */
 				stimulation_started 	= true;
@@ -89,7 +92,7 @@ public:
 				/* Update the timer */
 				time_to_stim += ISI;
 
-
+				/* Add marker */
 				marker_threshold.push_back(0);
 				marker_minimum.push_back(0);
 				marker_stimulation.push_back(time - correction);
@@ -181,15 +184,17 @@ public:
 
 	/* Create MATLAB container for marker storage */
 	mxArray* get_marker(void) {
+		extern const int res;
 		mxArray* Marker	= mxCreateDoubleMatrix(0, 0, mxREAL);
 	    mxSetM(Marker, 3);
 	    mxSetN(Marker, marker_stimulation.size());
 	    mxSetData(Marker, mxMalloc(sizeof(double)*3*marker_stimulation.size()));
 		double* Pr_Marker	= mxGetPr(Marker);
 		for(unsigned i=0; i<marker_stimulation.size(); ++i) {
-			Pr_Marker[0+i*3] = marker_threshold[i];
-			Pr_Marker[1+i*3] = marker_minimum[i];
-			Pr_Marker[2+i*3] = marker_stimulation[i];
+			/* Division by res transforms marker time from sample rate to sec */
+			Pr_Marker[0+i*3] = marker_threshold[i]/res;
+			Pr_Marker[1+i*3] = marker_minimum[i]/res;
+			Pr_Marker[2+i*3] = marker_stimulation[i]/res;
 		}
 		return Marker;
 	}
@@ -205,10 +210,10 @@ private:
 	int ISI				= 5E4;
 
 	/* Threshold for phase dependent stimulation */
-	double threshold	= -80;
+	double threshold	= -70;
 
 	/* Time until stimulus after minimum was found */
-	int	time_to_stim	= 5500;
+	int	time_to_stim	= 900;
 
 	/* Mode of stimulation 				*/
 	/* 0 == none 						*/
@@ -246,9 +251,9 @@ private:
 	Thalamic_Column* Thalamus;
 
 	/* Data containers */
-	std::vector<int>	marker_threshold;
-	std::vector<int>	marker_minimum;
-	std::vector<int>	marker_stimulation;
+	std::vector<double>	marker_threshold;
+	std::vector<double>	marker_minimum;
+	std::vector<double>	marker_stimulation;
 };
 /****************************************************************************************************/
 /*										 		end													*/

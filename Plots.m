@@ -1,26 +1,22 @@
 % mex command is given by: 
-% mex CXXFLAGS="\$CXXFLAGS -std=c++0x" TC.cpp Cortical_Column.cpp Thalamic_Column.cpp
+% mex CXXFLAGS="\$CXXFLAGS -std=c++11" TC.cpp Cortical_Column.cpp Thalamic_Column.cpp
 
 function Plots(T)
 
 if nargin == 0
-    Input_N3    = [ 8.7;          % sigma_e
-                    2.6;        % alpha_Na
-                    3;          % tau_Na
-                    1.6;        % g_KNa
-                    60E-3];     % dphi
+    Input_N3    = [ 6.5;        % sigma_e
+                    2.1;        % g_KNa
+                    120E-3];	% dphi
                         
                         
-    Input_N2    = [ 4.6;        % sigma_e
-                    2;          % alpha_Na
-                    1.2;        % tau_Na
-                    1.33;       % g_KNa
-                    60E-3];     % dphi
-
-    Connectivity= [2.5;           % N_et
-               	   2.5;           % N_er
-                   4;           % N_te
-                   4];          % N_ti    
+    Input_N2    = [ 4.7;        % sigma_e
+                    1.5;        % g_KNa
+                    120E-3];	% dphi
+                
+    Connectivity= [2.4;         % N_et
+               	   2.5;         % N_er
+                   5;           % N_te
+                   5];          % N_ti   
 
     % stimulation parameters
     % first number is the mode of stimulation
@@ -30,15 +26,15 @@ if nargin == 0
     % 3 == phase dependend down state
     
     var_stim    = [ 0;          % mode of stimulation
-                    40;          % strength of the stimulus      in Hz (spikes per second)
-                    150;       	% duration of the stimulus      in ms
-                    5;          % time between stimuli          in s    
-                    0];         % time until stimuli after min 	in ms
+                    60;          % strength of the stimulus             in Hz (spikes per second)
+                    100;       	% duration of the stimulus              in ms
+                    5;          % time between stimuli                  in s    
+                    650];       % time until stimuli after negativ peak	in ms
 
     T       	= 30;           % duration of the simulation
 end
 
-[Ve, Vt] = TC(T, Input_N2, Connectivity, var_stim);
+[Ve, Vt, Marker_Stim] = TC(T, Input_N2, Connectivity, var_stim);
 
 L        = max(size(Vt));
 timeaxis = linspace(0,T,L);
@@ -46,6 +42,22 @@ timeaxis = linspace(0,T,L);
 figure(1)
 subplot(211), plot(timeaxis,Ve)
 title('Pyramidal membrane voltage'), xlabel('time in s'), ylabel('Ve in mV')
+% vertical line for markers
+%hx = graph2d.constantline(Marker_Stim(3,:));
+%changedependvar(hx,'x');
+
 subplot(212), plot(timeaxis,Vt)
 title('Thalamic relay membrane voltage'), xlabel('time in s'), ylabel('Vt in mV')
-%save('TC.mat','Ve','Vt')
+% vertical line for markers
+%hx = graph2d.constantline(Marker_Stim(3,:));
+%changedependvar(hx,'x');
+
+
+% [Pxx,f]   = pwelch(Ve-mean(Ve),[], [], [], L/T);
+% n         = find(f<=30, 1, 'last' );
+% 
+% figure(2)
+% plot(f(1:n),log(Pxx(1:n)))
+% title('Powerspectrum with pwelch'), xlabel('frequency in Hz'), ylabel('Power (log)')
+% save('Timeseries', 'Ve', 'Vt');
+end

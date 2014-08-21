@@ -55,8 +55,7 @@ public:
 	{set_RNG();}
 
 	Cortical_Column(double* Par, double* Con)
-	 :sigma_e 	(Par[0]),	alpha_Na 	(Par[1]),	  tau_Na	(Par[2]),	  g_KNa		(Par[3]),
-	  dphi		(Par[4]),
+	 :sigma_e 	(Par[0]),	g_KNa		(Par[1]), 	  dphi		(Par[2]),
 	  N_te		(Con[2]),	N_ti		(Con[3])
 	{set_RNG();}
 
@@ -142,7 +141,7 @@ private:
 
 	/* parameters of the firing adaption */
 	const double 	alpha_Na	= 2;			/* Sodium influx per spike			in mM ms 	*/
-	const double 	tau_Na		= 1.2;			/* Sodium time constant 			in ms 		*/
+	const double 	tau_Na		= 1;			/* Sodium time constant 			in ms 		*/
 
 	const double 	R_pump   	= 0.09;        	/* Na-K pump  constant              in mM/ms 	*/
 	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration              in mM 		*/
@@ -152,7 +151,7 @@ private:
 	const double 	gamma_i		= 58.6E-3;
 
 	/* Axonal flux time constant */
-	const double 	nu			= 60E-3;
+	const double 	nu			= 120E-3;
 
 	/* Conductivities in mS/cm^-2 */
 	/* Leak */

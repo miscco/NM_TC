@@ -154,18 +154,18 @@ private:
 	const double 	theta_r		= -58.6;
 
 	/* Sigmoid gain in mV */
-	const double 	sigma_t		= 2;
-	const double 	sigma_r		= 2;
+	const double 	sigma_t		= 4;
+	const double 	sigma_r		= 4;
 
 	/* Scaling parameter for sigmoidal mapping (dimensionless) */
 	const double 	C1          = (3.14159265/sqrt(3));
 
 	/* PSP rise time in ms^-1 */
 	const double 	gamma_e		= 70E-3;
-	const double 	gamma_i		= 58.6E-3;
+	const double 	gamma_i		= 100E-3;
 
 	/* axonal flux time constant */
-	const double 	nu			= 60E-3;
+	const double 	nu			= 120E-3;
 
 	/* Conductivities in mS/cm^-2 */
 	/* Leak current */
@@ -174,14 +174,14 @@ private:
 
 	/* Potassium leak current */
 	const double 	g_LK_t 		= 0.025;
-	const double 	g_LK_r 		= 0.02;
+	const double 	g_LK_r 		= 0.025;
 
 	/* T current */
 	const double	g_T_t		= 3;
 	const double	g_T_r		= 2;
 
 	/* h current */
-	const double	g_h			= 0.06;
+	const double	g_h			= 0.08;
 
 	/* Reversal potentials in mV */
 	/* Synaptic */
@@ -216,14 +216,14 @@ private:
 
 	/* Noise parameters in ms^-1 */
 	const double 	mphi		= 0E-3;
-	const double	dphi		= 20E-3;;
+	const double	dphi		= 10E-3;;
 	double			input		= 0.0;
 
 
 	/* Connectivities (dimensionless) */
-	const double 	N_tr		= 5;
+	const double 	N_tr		= 6;
 	const double 	N_rt		= 5;
-	const double 	N_rr		= 50;
+	const double 	N_rr		= 100;
 	const double 	N_et		= 10;
 	const double 	N_er		= 10;
 
