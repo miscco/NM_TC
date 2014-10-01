@@ -31,21 +31,23 @@ if nargin == 0
     % stimulation parameters
     % first number is the mode of stimulation
     % 0 == none
-    % 1 == periodic
-    % 2 == phase dependend up state
-    % 3 == phase dependend down state
+    % 1 == semi-periodic
+    % 2 == phase dependend
     
-    var_stim    = [ 0;          % mode of stimulation
-                    60;          % strength of the stimulus             in Hz (spikes per second)
-                    200;       	% duration of the stimulus              in ms
-                    5;          % time between stimuli                  in s    
-                    300];       % time until stimuli after negativ peak	in ms
+    var_stim    = [ 2;          % mode of stimulation
+                    25;         % strength of the stimulus              in Hz (spikes per second)
+                    120;       	% duration of the stimulus              in ms
+                    5;          % time between stimulation events       in s  (ISI)
+                    0;          % range of ISI                          in s  [ISI-range,ISI+range]  
+                    2;          % Number of stimuli per event
+                    950;        % time between stimuli within a event   in ms         
+                    500];       % time until stimuli after minimum      in ms
 
-    T       	= 600;           % duration of the simulation
+    T       	= 30;           % duration of the simulation
 end
 
-%[Ve, Vt, Marker_Stim] = TC(T, Param_Cortex_N2, Param_Thalamus_N2, Connectivity, var_stim);
-[Ve, Vt, Marker_Stim] = TC(T, Param_Cortex_N3, Param_Thalamus_N3, Connectivity, var_stim);
+[Ve, Vt, Marker_Stim] = TC(T, Param_Cortex_N2, Param_Thalamus_N2, Connectivity, var_stim);
+%[Ve, Vt, Marker_Stim] = TC(T, Param_Cortex_N3, Param_Thalamus_N3, Connectivity, var_stim);
 
 L        = max(size(Vt));
 timeaxis = linspace(0,T,L);
@@ -55,22 +57,26 @@ subplot(211), plot(timeaxis,Ve)
 title('Pyramidal membrane voltage'), xlabel('time in s'), ylabel('Ve in mV')
 ylim([-80, -40])
 % vertical line for markers
-hx1 = graph2d.constantline(Marker_Stim(2,:), 'color', 'black');
-hx2 = graph2d.constantline(Marker_Stim(1,:), 'color', 'red');
-changedependvar(hx1,'x');
+for i=1:var_stim(6)
+    hx = graph2d.constantline(Marker_Stim/1E2+(i-1)*var_stim(7)/1E3,'ydata', get(gca,'ylim'), 'color', 'black', 'LineStyle', ':');
+    changedependvar(hx,'x');
+end
+hx2 = graph2d.constantline((Marker_Stim/1E2 -var_stim(8)/1E3), 'color', 'red');
 changedependvar(hx2,'x');
 
 subplot(212), plot(timeaxis,Vt)
 title('Thalamic relay membrane voltage'), xlabel('time in s'), ylabel('Vt in mV')
+ylim(get(gca,'ylim'));
 % vertical line for markers
-hx = graph2d.constantline(Marker_Stim(2,:));
-changedependvar(hx,'x');
-
-[Pxx,f]   = pwelch(Ve-mean(Ve),hamming(L/30), 4*L/T, 2048, L/T);
-n         = find(f<=30, 1, 'last' );
-
-figure(2)
-plot(f(1:n),log(Pxx(1:n)))
-title('Powerspectrum with pwelch'), xlabel('frequency in Hz'), ylabel('Power (log)')
+for i=1:var_stim(6)
+    hx = graph2d.constantline(Marker_Stim/1E2+(i-1)*var_stim(7)/1E3,'ydata', get(gca,'ylim'), 'color', 'black', 'LineStyle', ':');
+    changedependvar(hx,'x');
+end
+% [Pxx,f]   = pwelch(Ve-mean(Ve),hamming(L/30), 4*L/T, 2048, L/T);
+% n         = find(f<=30, 1, 'last' );
+% 
+% figure(2)
+% plot(f(1:n),log(Pxx(1:n)))
+% title('Powerspectrum with pwelch'), xlabel('frequency in Hz'), ylabel('Power (log)')
 %save('Timeseries', 'Ve', 'Vt');
 end

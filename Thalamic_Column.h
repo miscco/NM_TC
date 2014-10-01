@@ -179,10 +179,10 @@ private:
 
 	/* T current */
 	const double	g_T_t		= 3;
-	const double	g_T_r		= 2;
+	const double	g_T_r		= 2.3;
 
 	/* h current */
-	const double	g_h			= 0.09;
+	const double	g_h			= 0.05;
 
 	/* Reversal potentials in mV */
 	/* Synaptic */
@@ -200,16 +200,16 @@ private:
 	const double 	E_Ca    	= 120;
 
 	/* I_h current */
-	const double 	E_h    		= -43;
+	const double 	E_h    		= -40;
 
 	/* Calcium parameters */
-	const double	alpha_Ca	= -50E-6;			/* influx per spike in nmol		*/
+	const double	alpha_Ca	= -52E-6;			/* influx per spike in nmol		*/
 	const double	tau_Ca		= 10;				/* calcium time constant in ms	*/
-	const double	Ca_0		= 2E-4;				/* resting concentration 		*/
+	const double	Ca_0		= 2.4E-4;				/* resting concentration 		*/
 
 	/* I_h activation parameters */
 	const double 	k1			= 2.5E7;
-	const double 	k2			= 5E-4;
+	const double 	k2			= 4E-4;
 	const double 	k3			= 1E-1;
 	const double 	k4			= 1E-3;
 	const double 	n_P			= 4;
@@ -222,9 +222,9 @@ private:
 
 
 	/* Connectivities (dimensionless) */
-	const double 	N_tr		= 6;
-	const double 	N_rt		= 5;
-	const double 	N_rr		= 100;
+	const double 	N_tr		= 4;
+	const double 	N_rt		= 4;
+	const double 	N_rr		= 20;
 	const double 	N_et		= 10;
 	const double 	N_er		= 10;
 

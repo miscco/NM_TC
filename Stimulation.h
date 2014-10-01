@@ -127,7 +127,6 @@ private:
 	Thalamic_Column* Thalamus;
 
 	/* Data containers */
-	vector<int>		marker_minimum;
 	vector<int>		marker_stimulation;
 
 	/* Random number generator in case of semi-periodic stimulation */
@@ -206,6 +205,11 @@ void Stim::check_stim	(int time) {
 			stimulation_started 	= true;
 			Thalamus->set_input(strength);
 
+			/* Add marker for the first stimuli in the event */
+			if(count_stimuli == 1) {
+				marker_stimulation.push_back(time - onset_correction);
+			}
+
 			/* Check if multiple stimuli should be applied */
 			if (count_stimuli < number_of_stimuli) {
 				/* Update the timer with respect to time between stimuli */
@@ -217,14 +221,8 @@ void Stim::check_stim	(int time) {
 				time_to_stimuli += (ISI_range==0)? ISI : Uniform_Distribution(Generator);
 
 				/* Reset the stimulus counter for next stimulation event */
-				if (number_of_stimuli != 1) {
-					count_stimuli = 1;
-				}
+				count_stimuli = 1;
 			}
-
-			/* Add marker */
-			marker_minimum.push_back(0);
-			marker_stimulation.push_back(time - onset_correction);
 		}
 		break;
 
@@ -242,10 +240,6 @@ void Stim::check_stim	(int time) {
 			if(Cortex->Ve[0]>Ve_old) {
 				threshold_crossed 	= false;
 				minimum_found 		= true;
-				/* add one marker for every stimuli in the event */
-				for(int i=0; i<number_of_stimuli; ++i) {
-					marker_minimum.push_back(time - onset_correction);
-				}
 				Ve_old = 0;
 			} else {
 				Ve_old = Cortex->Ve[0];
@@ -255,14 +249,18 @@ void Stim::check_stim	(int time) {
 		/* Wait until the stimulation should start */
 		if(minimum_found) {
 			/* Start stimulation after time_to_stimuli has passed */
-			if(count_to_start==time_to_stimuli) {
+			if(count_to_start==time_to_stimuli + (count_stimuli-1) * time_between_stimuli) {
 				stimulation_started 	= true;
 				Thalamus->set_input(strength);
 
+				/* Add marker for the first stimuli in the event */
+				if(count_stimuli == 1) {
+					marker_stimulation.push_back(time - onset_correction);
+				}
+
 				/* Check if multiple stimuli should be applied */
 				if (count_stimuli < number_of_stimuli) {
-					/* Update the timer with respect to time between stimuli */
-					time_to_stimuli += time_between_stimuli;
+					/* Update the number of stimuli */
 					count_stimuli++;
 				} else {
 					/* After last stimulus in event pause the stimulation */
@@ -271,15 +269,9 @@ void Stim::check_stim	(int time) {
 					count_to_start 			= 0;
 
 					/* Reset the stimulus counter for next stimulation event */
-					if (number_of_stimuli != 1) {
-						count_stimuli = 1;
-					}
+					count_stimuli = 1;
 				}
-
-				/* Add marker */
-				marker_stimulation.push_back(time - onset_correction);
 			}
-
 			count_to_start++;
 		}
 		break;
@@ -308,14 +300,13 @@ void Stim::check_stim	(int time) {
 mxArray* Stim::get_marker(void) {
 	extern const int red;
 	mxArray* Marker	= mxCreateDoubleMatrix(0, 0, mxREAL);
-    mxSetM(Marker, 2);
+    mxSetM(Marker, 1);
     mxSetN(Marker, marker_stimulation.size());
-    mxSetData(Marker, mxMalloc(sizeof(double)*2*marker_stimulation.size()));
+    mxSetData(Marker, mxMalloc(sizeof(double)*marker_stimulation.size()));
 	double* Pr_Marker	= mxGetPr(Marker);
 	for(unsigned i=0; i<marker_stimulation.size(); ++i) {
 		/* Division by res transforms marker time from dt to sampling rate */
-		Pr_Marker[0+i*2] = marker_minimum	  [i]/red;
-		Pr_Marker[1+i*2] = marker_stimulation [i]/red;
+		Pr_Marker[i] = marker_stimulation [i]/red;
 	}
 	return Marker;
 };
