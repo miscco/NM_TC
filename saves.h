@@ -24,7 +24,6 @@
 /*									Functions for data storage										*/
 /****************************************************************************************************/
 #pragma once
-#include <iostream>
 #include "Cortical_Column.h"
 #include "Thalamic_Column.h"
 

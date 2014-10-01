@@ -56,8 +56,9 @@ public:
 	{set_RNG();}
 
 	/* Constructor for simulation */
-	Thalamic_Column(double* Con)
-	: N_et 		(Con[0]),		N_er	(Con[1])
+	Thalamic_Column(double* Param, double* Con)
+	: g_LK_t	(Param[0]),		g_LK_r(Param[1]), 	g_h(Param[2]),
+	  N_et 		(Con[0]),		N_er	(Con[1])
 	{set_RNG();}
 
 	/* Get the pointer to the cortical module */
@@ -173,15 +174,15 @@ private:
 	const double 	g_L_r  		= 1;
 
 	/* Potassium leak current */
-	const double 	g_LK_t 		= 0.025;
-	const double 	g_LK_r 		= 0.025;
+	const double 	g_LK_t 		= 0.02;
+	const double 	g_LK_r 		= 0.02;
 
 	/* T current */
 	const double	g_T_t		= 3;
 	const double	g_T_r		= 2;
 
 	/* h current */
-	const double	g_h			= 0.08;
+	const double	g_h			= 0.09;
 
 	/* Reversal potentials in mV */
 	/* Synaptic */

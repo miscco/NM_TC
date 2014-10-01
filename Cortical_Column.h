@@ -54,9 +54,9 @@ public:
 	Cortical_Column(void)
 	{set_RNG();}
 
-	Cortical_Column(double* Par, double* Con)
-	 :sigma_e 	(Par[0]),	g_KNa		(Par[1]), 	  dphi		(Par[2]),
-	  N_te		(Con[2]),	N_ti		(Con[3])
+	Cortical_Column(double* Param, double* Con)
+	 :sigma_e 	(Param[0]),	g_KNa	(Param[1]), 	  dphi	(Param[2]),
+	  N_te		(Con[2]),	N_ti	(Con[3])
 	{set_RNG();}
 
 	/* Connect to the thalamic module */
@@ -94,7 +94,7 @@ public:
 	/* Data storage access */
 	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 2));
 
-	/* Stimulation protocoll access */
+	/* Stimulation protocol access */
 	friend class 	Stim;
 
 private:
@@ -141,7 +141,7 @@ private:
 
 	/* parameters of the firing adaption */
 	const double 	alpha_Na	= 2;			/* Sodium influx per spike			in mM ms 	*/
-	const double 	tau_Na		= 1;			/* Sodium time constant 			in ms 		*/
+	const double 	tau_Na		= 1.5;			/* Sodium time constant 			in ms 		*/
 
 	const double 	R_pump   	= 0.09;        	/* Na-K pump  constant              in mM/ms 	*/
 	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration              in mM 		*/
@@ -161,7 +161,7 @@ private:
 	const double	g_KNa		= 1.33;
 
 	/* Reversal potentials in mV */
-	/* synaptic */
+	/* Synaptic */
 	const double 	E_AMPA  	= 0;
 	const double 	E_GABA  	= -70;
 
