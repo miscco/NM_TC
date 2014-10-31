@@ -160,10 +160,15 @@ double Thalamic_Column::m_inf_h	(int N) const{
 	return h;
 }
 
-/* Activation time for slow components in TC population after Destexhe 1993 */
+/* Activation time for slow components in TC population*/
 double Thalamic_Column::tau_m_h	(int N) const{
 	_SWITCH((Vt))
-	double tau = 1. / (exp(-14.59 - 0.086 * var_Vt) + exp(-1.87 + 0.07 * var_Vt));
+	/* Destexhe 1993 */
+	//double tau = 1. / (exp(-14.59 - 0.086 * var_Vt) + exp(-1.87 + 0.07 * var_Vt));
+	/* Bazhenov1998 */
+	double tau = (5.3 + 267/(exp((var_Vt + 71.5)/14.2) + exp(-(var_Vt + 89)/11.6)));
+	/* Chen2012 */
+	//double tau = (20  +1000/(exp((var_Vt + 71.5)/14.2) + exp(-(var_Vt + 89)/11.6)));
 	return tau;
 }
 /****************************************************************************************************/
@@ -256,7 +261,7 @@ void Thalamic_Column::set_RK (int N) {
 	h_T_t 	[N] = dt*(h_inf_T_t(N) - var_h_T_t)/tau_h_T_t(N);
 	h_T_r 	[N] = dt*(h_inf_T_r(N) - var_h_T_r)/tau_h_T_r(N);
 	m_h 	[N] = dt*((m_inf_h(N) * (1 - var_m_h2) - var_m_h)/tau_m_h(N) - k3 * var_P_h * var_m_h + k4 * var_m_h2);
-	m_h2 	[N] = dt*(k3   * var_P_h			 * 	    var_m_h  	- k4   * var_m_h2);
+	m_h2 	[N] = dt*(k3 * k1 * pow(var_Ca, n_P)/(k1*pow(var_Ca, n_P)+k2) * 	    var_m_h  	- k4   * var_m_h2);
 	P_h		[N] = dt*(k1   * pow(var_Ca, n_P) 	 * (1 - var_P_h) 	- k2   * var_P_h);
 	Phi_tt	[N] = dt*(var_x_tt);
 	Phi_tr	[N] = dt*(var_x_tr);
