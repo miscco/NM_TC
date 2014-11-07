@@ -160,16 +160,21 @@ double Thalamic_Column::m_inf_h	(int N) const{
 	return h;
 }
 
-/* Activation time for slow components in TC population*/
+/* Activation time for slow components in TC population after Chen2012 */
 double Thalamic_Column::tau_m_h	(int N) const{
 	_SWITCH((Vt))
-	/* Destexhe 1993 */
-	//double tau = 1. / (exp(-14.59 - 0.086 * var_Vt) + exp(-1.87 + 0.07 * var_Vt));
 	/* Bazhenov1998 */
-	double tau = (5.3 + 267/(exp((var_Vt + 71.5)/14.2) + exp(-(var_Vt + 89)/11.6)));
+	//double tau = (5.3 + 267/(exp((var_Vt + 71.5)/14.2) + exp(-(var_Vt + 89)/11.6)));
 	/* Chen2012 */
-	//double tau = (20  +1000/(exp((var_Vt + 71.5)/14.2) + exp(-(var_Vt + 89)/11.6)));
+	double tau = (20 + 1000/(exp((var_Vt + 71.5)/14.2) + exp(-(var_Vt + 89)/11.6)));
 	return tau;
+}
+
+/* Instantaneous calcium binding onto messenger protein after Chen2012 */
+double Thalamic_Column::P_h	(int N) const{
+	_SWITCH((Ca))
+	double P_h = k1 * pow(var_Ca, n_P)/(k1*pow(var_Ca, n_P)+k2);
+	return P_h;
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -254,15 +259,14 @@ void Thalamic_Column::set_RK (int N) {
 	_SWITCH((Ca)
 			(Phi_tt)(Phi_tr)(Phi_rt)(Phi_rr)(phi)
 			(x_tt)	(x_tr)	(x_rt)	(x_rr)	(y)
-			(h_T_t)	(h_T_r)	(m_h)	(m_h2)	(P_h))
+			(h_T_t)	(h_T_r)	(m_h)	(m_h2))
 	Vt	  	[N] = dt*(-(I_L_t(N) + I_et(N) + I_it(N))/tau_t - (I_LK_t(N) + I_T_t(N) + I_h(N)));
 	Vr	  	[N] = dt*(-(I_L_r(N) + I_er(N) + I_ir(N))/tau_r - (I_LK_r(N) + I_T_r(N)));
 	Ca		[N] = dt*(alpha_Ca * I_T_t(N) - (var_Ca - Ca_0)/tau_Ca);
 	h_T_t 	[N] = dt*(h_inf_T_t(N) - var_h_T_t)/tau_h_T_t(N);
 	h_T_r 	[N] = dt*(h_inf_T_r(N) - var_h_T_r)/tau_h_T_r(N);
-	m_h 	[N] = dt*((m_inf_h(N) * (1 - var_m_h2) - var_m_h)/tau_m_h(N) - k3 * var_P_h * var_m_h + k4 * var_m_h2);
-	m_h2 	[N] = dt*(k3 * k1 * pow(var_Ca, n_P)/(k1*pow(var_Ca, n_P)+k2) * 	    var_m_h  	- k4   * var_m_h2);
-	P_h		[N] = dt*(k1   * pow(var_Ca, n_P) 	 * (1 - var_P_h) 	- k2   * var_P_h);
+	m_h 	[N] = dt*((m_inf_h(N) * (1 - var_m_h2) - var_m_h)/tau_m_h(N) - k3 * P_h(N) * var_m_h + k4 * var_m_h2);
+	m_h2 	[N] = dt*(k3 * P_h(N) * var_m_h - k4 * var_m_h2);
 	Phi_tt	[N] = dt*(var_x_tt);
 	Phi_tr	[N] = dt*(var_x_tr);
 	Phi_rt	[N] = dt*(var_x_rt);
@@ -301,7 +305,6 @@ void Thalamic_Column::add_RK(void) {
 	h_T_r 	[0] += (h_T_r	[1] + h_T_r		[2] * 2 + h_T_r		[3] * 2 + h_T_r		[4])/6;
 	m_h		[0] += (m_h		[1] + m_h		[2] * 2 + m_h		[3] * 2 + m_h		[4])/6;
 	m_h2	[0] += (m_h2	[1] + m_h2		[2] * 2 + m_h2		[3] * 2 + m_h2		[4])/6;
-	P_h	 	[0] += (P_h		[1] + P_h		[2] * 2 + P_h		[3] * 2 + P_h		[4])/6;
 
 	/* Generate noise for the next iteration */
 	for (unsigned i=0; i<Rand_vars.size(); ++i) {

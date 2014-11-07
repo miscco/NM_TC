@@ -89,7 +89,7 @@ private:
 	int 	time_between_stimuli 	= 1050E1;
 
 	/* Threshold for phase dependent stimulation */
-	double 	threshold				= -72;
+	double 	threshold				= -68.5;
 
 	/* Internal variables */
 	/* Simulation on for TRUE and off for FALSE */

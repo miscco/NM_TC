@@ -141,7 +141,7 @@ private:
 
 	/* parameters of the firing adaption */
 	const double 	alpha_Na	= 2;			/* Sodium influx per spike			in mM ms 	*/
-	const double 	tau_Na		= 1.5;			/* Sodium time constant 			in ms 		*/
+	const double 	tau_Na		= 1.7;			/* Sodium time constant 			in ms 		*/
 
 	const double 	R_pump   	= 0.09;        	/* Na-K pump  constant              in mM/ms 	*/
 	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration              in mM 		*/

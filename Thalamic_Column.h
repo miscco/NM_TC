@@ -57,7 +57,7 @@ public:
 
 	/* Constructor for simulation */
 	Thalamic_Column(double* Param, double* Con)
-	: g_h 		(Param[0]),	g_LK_t	(Param[1]),	g_LK_r	(Param[2]),
+	: g_LK_t	(Param[1]),	g_LK_r	(Param[2]),	g_h (Param[0]),
 	  N_et 		(Con[0]),	N_er	(Con[1])
 	{set_RNG();}
 
@@ -88,6 +88,7 @@ public:
 	double  m_inf_T_r	(int) const;
 	double  m_inf_h		(int) const;
 	double  tau_m_h		(int) const;
+	double  P_h			(int) const;
 
 	/* Deactivation functions */
 	double  h_inf_T_t	(int) const;
@@ -132,8 +133,7 @@ private:
 					h_T_t	= _INIT(0.0),		/* inactivation of T channel						*/
 					h_T_r	= _INIT(0.0),		/* inactivation of T channel						*/
 					m_h		= _INIT(0.0),		/* activation 	of h   channel						*/
-					m_h2	= _INIT(0.0),		/* activation 	of h   channel bound with protein 	*/
-					P_h		= _INIT(0.0);		/* fraction of protein bound with calcium 			*/
+					m_h2	= _INIT(0.0);		/* activation 	of h   channel bound with protein 	*/
 
 	/* Random number generators */
 	vector<GEN>		MTRands;
@@ -174,15 +174,15 @@ private:
 	const double 	g_L_r  		= 1;
 
 	/* Potassium leak current */
-	const double 	g_LK_t 		= 0.024;
-	const double 	g_LK_r 		= 0.024;
+	const double 	g_LK_t 		= 0.02;
+	const double 	g_LK_r 		= 0.02;
 
 	/* T current */
 	const double	g_T_t		= 3;
 	const double	g_T_r		= 2.3;
 
 	/* h current */
-	const double	g_h			= 0.048;
+	const double	g_h			= 0.07;
 
 	/* Reversal potentials in mV */
 	/* Synaptic */
@@ -203,9 +203,9 @@ private:
 	const double 	E_h    		= -40;
 
 	/* Calcium parameters */
-	const double	alpha_Ca	= -50E-6;			/* influx per spike in nmol		*/
+	const double	alpha_Ca	= -51.8E-6;			/* influx per spike in nmol		*/
 	const double	tau_Ca		= 10;				/* calcium time constant in ms	*/
-	const double	Ca_0		= 2E-4;				/* resting concentration 		*/
+	const double	Ca_0		= 2.4E-4;				/* resting concentration 		*/
 
 	/* I_h activation parameters */
 	const double 	k1			= 2.5E7;
@@ -223,8 +223,8 @@ private:
 
 	/* Connectivities (dimensionless) */
 	const double 	N_tr		= 3;
-	const double 	N_rt		= 4;
-	const double 	N_rr		= 22;
+	const double 	N_rt		= 5;
+	const double 	N_rr		= 16;
 	const double 	N_et		= 5;
 	const double 	N_er		= 5;
 
