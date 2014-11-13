@@ -21,9 +21,13 @@ else
                            2.1;          % g_KNa
                            120E-3];     % dphi
                        
-    Param_Thalamus      = [0.055;       % g_h
-                           0.024;       % g_LK_t
-                           0.024];       % g_LK_r                    
+    Param_Thalamus      = [0.042;       % g_h
+                           0.022;       % g_LK_t
+                           0.022;       % g_LK_r  
+                           2.5;         % k1
+                           4;           % k2
+                           1;           % k3
+                           1];          % k4
 end
                         
 Connectivity            = [ 4;          % N_et
@@ -48,13 +52,13 @@ var_stim    = [ 2;          % mode of stimulation
 
 T       	= 30;           % duration of the simulation
 
-[Ve, Vt, Marker_Stim] = TC(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
+[Ve, Vt, ah, Marker_Stim] = TC(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
 
 L        = length(Vt);
 timeaxis = linspace(0,T,L);
 
 figure(1)
-subplot(211), plot(timeaxis,Ve)
+subplot(311), plot(timeaxis,Ve)
 title('Pyramidal membrane voltage'), 
 xlabel('Time in s'), 
 ylabel('V_{e} in mV')
@@ -66,12 +70,24 @@ for i=1:var_stim(6)
     changedependvar(hx,'x');
 end
 
-subplot(212), plot(timeaxis,Vt)
+subplot(312), plot(timeaxis,Vt)
 title('Thalamic relay membrane voltage'), 
 xlabel('Time in s'), 
 ylabel('V_{t} in mV')
 xlim([0,30]);
 ylim([-70,-35]);
+% vertical line for markers
+for i=1:var_stim(6)
+    hx = graph2d.constantline(Marker_Stim/1E2+(i-1)*var_stim(7)/1E3,'ydata', get(gca,'ylim'),'xdata', get(gca,'xlim'), 'color', 'black', 'LineStyle', ':');
+    changedependvar(hx,'x');
+end
+
+subplot(313), plot(timeaxis,ah)
+title('Thalamic relay I_h activation'), 
+xlabel('Time in s'), 
+ylabel('m_h in mV')
+xlim([0,30]);
+ylim(get(gca,'ylim'));
 % vertical line for markers
 for i=1:var_stim(6)
     hx = graph2d.constantline(Marker_Stim/1E2+(i-1)*var_stim(7)/1E3,'ydata', get(gca,'ylim'),'xdata', get(gca,'xlim'), 'color', 'black', 'LineStyle', ':');

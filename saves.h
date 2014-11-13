@@ -30,9 +30,10 @@
 /****************************************************************************************************/
 /*											Save data												*/
 /****************************************************************************************************/
-inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, double* Ve, double* Vt) {
+inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, double* Ve, double* Vt, double* ah) {
 	Ve 	[counter] = Cortex.Ve		[0];
 	Vt 	[counter] = Thalamus.Vt		[0];
+	ah 	[counter] = Thalamus.act_h	();
 }
 /****************************************************************************************************/
 /*										 		end													*/

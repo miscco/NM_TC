@@ -58,6 +58,8 @@ public:
 	/* Constructor for simulation */
 	Thalamic_Column(double* Param, double* Con)
 	: g_LK_t	(Param[1]),	g_LK_r	(Param[2]),	g_h (Param[0]),
+	  k1		(Param[3]*1E7),		k2		(Param[4]*1E-4),
+	  k3		(Param[5]*1E-1),	k4		(Param[6]*1E-3),
 	  N_et 		(Con[0]),	N_er	(Con[1])
 	{set_RNG();}
 
@@ -88,7 +90,8 @@ public:
 	double  m_inf_T_r	(int) const;
 	double  m_inf_h		(int) const;
 	double  tau_m_h		(int) const;
-	double  P_h			(int) const;
+	double  P_H			(int) const;
+	double  act_h		(void)const;
 
 	/* Deactivation functions */
 	double  h_inf_T_t	(int) const;
@@ -113,7 +116,7 @@ public:
 	void 	add_RK	 	(void);
 
 	/* Data storage  access */
-	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 2));
+	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 3));
 
 private:
 	/* Population variables */
@@ -133,7 +136,8 @@ private:
 					h_T_t	= _INIT(0.0),		/* inactivation of T channel						*/
 					h_T_r	= _INIT(0.0),		/* inactivation of T channel						*/
 					m_h		= _INIT(0.0),		/* activation 	of h   channel						*/
-					m_h2	= _INIT(0.0);		/* activation 	of h   channel bound with protein 	*/
+					m_h2	= _INIT(0.0),		/* activation 	of h   channel bound with protein 	*/
+					P_h		= _INIT(0.0);		/* messenger protein bound with calcium			 	*/
 
 	/* Random number generators */
 	vector<GEN>		MTRands;
