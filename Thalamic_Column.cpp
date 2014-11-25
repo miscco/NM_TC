@@ -114,7 +114,7 @@ double Thalamic_Column::m_inf_T_t	(int N) const{
 /* Activation in RE population after Destexhe 1996 */
 double Thalamic_Column::m_inf_T_r	(int N) const{
 	_SWITCH((Vr))
-	double m = 1/(1+exp(-(var_Vr+52)/7.2));
+	double m = 1/(1+exp(-(var_Vr+52)/7.4));
 	return m;
 }
 

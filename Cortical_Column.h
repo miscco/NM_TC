@@ -92,7 +92,7 @@ public:
 	void 	add_RK	 	(void);
 
 	/* Data storage access */
-	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 3));
+	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 4));
 
 	/* Stimulation protocol access */
 	friend class 	Stim;

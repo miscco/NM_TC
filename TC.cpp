@@ -78,11 +78,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	/* Create data containers */
 	mxArray* Ve		= SetMexArray(1, T*res/red);
 	mxArray* Vt		= SetMexArray(1, T*res/red);
+	mxArray* Ca		= SetMexArray(1, T*res/red);
 	mxArray* ah		= SetMexArray(1, T*res/red);
 
 	/* Pointer to the actual data block */
 	double* Pr_Ve	= mxGetPr(Ve);
 	double* Pr_Vt	= mxGetPr(Vt);
+	double* Pr_Ca	= mxGetPr(Ca);
 	double* Pr_ah	= mxGetPr(ah);
 
 	/* Simulation */
@@ -91,7 +93,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		ODE (Cortex, Thalamus);
 		Stimulation.check_stim(t);
 		if(t>=onset*res && t%red==0){
-			get_data(count, Cortex, Thalamus, Pr_Ve, Pr_Vt, Pr_ah);
+			get_data(count, Cortex, Thalamus, Pr_Ve, Pr_Vt, Pr_Ca, Pr_ah);
 			++count;
 		}
 	}
@@ -99,8 +101,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	/* Output of the simulation */
 	plhs[0] = Ve;
 	plhs[1] = Vt;
-	plhs[2] = ah;
-	plhs[3] = Stimulation.get_marker();
+	plhs[2] = Ca;
+	plhs[3] = ah;
+	plhs[4] = Stimulation.get_marker();
 return;
 }
 /****************************************************************************************************/

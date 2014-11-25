@@ -57,9 +57,7 @@ public:
 
 	/* Constructor for simulation */
 	Thalamic_Column(double* Param, double* Con)
-	: g_LK_t	(Param[1]),	g_LK_r	(Param[2]),	g_h (Param[0]),
-	  k1		(Param[3]*1E7),		k2		(Param[4]*1E-4),
-	  k3		(Param[5]*1E-1),	k4		(Param[6]*1E-3),
+	: g_LK_t	(Param[1]),	g_LK_r	(Param[1]),	g_h (Param[0]),
 	  N_et 		(Con[0]),	N_er	(Con[1])
 	{set_RNG();}
 
@@ -116,7 +114,7 @@ public:
 	void 	add_RK	 	(void);
 
 	/* Data storage  access */
-	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 3));
+	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 4));
 
 private:
 	/* Population variables */
@@ -227,8 +225,8 @@ private:
 
 	/* Connectivities (dimensionless) */
 	const double 	N_tr		= 3;
-	const double 	N_rt		= 5;
-	const double 	N_rr		= 16;
+	const double 	N_rt		= 6;
+	const double 	N_rr		= 19;
 	const double 	N_et		= 5;
 	const double 	N_er		= 5;
 
