@@ -32,9 +32,9 @@
 /****************************************************************************************************/
 inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, double* Ve, double* Vt, double* Ca, double* ah) {
 	Ve 	[counter] = Cortex.Ve		[0];
-	Vt 	[counter] = Thalamus.Vt		[0];
-	Ca 	[counter] = Thalamus.Ca		[0];
-	ah 	[counter] = Thalamus.act_h	();
+    Vt 	[counter] = Thalamus.Vt		[0];
+    Ca 	[counter] = Thalamus.phi	[0];
+    ah 	[counter] = Thalamus.act_h	();
 }
 /****************************************************************************************************/
 /*										 		end													*/
@@ -45,7 +45,7 @@ inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thal
 /*									Create MATLAB data container									*/
 /****************************************************************************************************/
 mxArray* SetMexArray(int N, int M) {
-	mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
+    mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
     mxSetM(Array, N);
     mxSetN(Array, M);
     mxSetData(Array, mxMalloc(sizeof(double)*M*N));

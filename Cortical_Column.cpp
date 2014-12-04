@@ -52,14 +52,14 @@ void Cortical_Column::set_RNG(void) {
 /* Pyramidal firing rate */
 double Cortical_Column::get_Qe	(int N) const{
 	_SWITCH((Ve))
-	double q = Qe_max / (1 + exp(-C1 * (var_Ve - theta_e) / sigma_e));
+    double q = Qe_max / (1 + exp(-C1 * (var_Ve - theta_e) / sigma_e));
 	return q;
 }
 
 /* Inhibitory firing rate */
 double Cortical_Column::get_Qi	(int N) const{
 	_SWITCH((Vi))
-	double q = Qi_max / (1 + exp(-C1 * (var_Vi - theta_i) / sigma_i));
+    double q = Qi_max / (1 + exp(-C1 * (var_Vi - theta_i) / sigma_i));
 	return q;
 }
 /****************************************************************************************************/
@@ -121,7 +121,7 @@ double Cortical_Column::I_L_i	(int N) const{
 /* Sodium dependent potassium current */
 double Cortical_Column::I_KNa		(int N)  const{
 	_SWITCH((Ve)(Na))
-	double w_KNa  = 0.37/(1+pow(38.7/var_Na, 3.5));
+    double w_KNa  = 0.37/(1+pow(38.7/var_Na, 3.5));
 	double I_KNa  = g_KNa * w_KNa * (var_Ve - E_K);
 	return I_KNa;
 }

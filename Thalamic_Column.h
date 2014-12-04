@@ -153,8 +153,8 @@ private:
 	const double 	Qr_max		= 400.E-3;
 
 	/* Sigmoid threshold in mV */
-	const double 	theta_t		= -58.6;
-	const double 	theta_r		= -58.6;
+	const double 	theta_t		= -58.5;
+	const double 	theta_r		= -58.5;
 
 	/* Sigmoid gain in mV */
 	const double 	sigma_t		= 6;
@@ -219,14 +219,14 @@ private:
 
 	/* Noise parameters in ms^-1 */
 	const double 	mphi		= 0E-3;
-	const double	dphi		= 10E-3;;
+    const double	dphi		= 10E-3;
 	double			input		= 0.0;
 
 
 	/* Connectivities (dimensionless) */
 	const double 	N_tr		= 3;
-	const double 	N_rt		= 6;
-	const double 	N_rr		= 19;
+    const double 	N_rt		= 5;
+    const double 	N_rr		= 19;
 	const double 	N_et		= 5;
 	const double 	N_er		= 5;
 

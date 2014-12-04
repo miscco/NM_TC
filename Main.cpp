@@ -37,7 +37,7 @@
 /****************************************************************************************************/
 extern const int T		= 30;								/* Simulation length s					*/
 extern const int res 	= 1E4;								/* Number of iteration steps per s		*/
-extern const int red 	= 1E2;							/* Fraction of iterations that is saved	*/
+extern const int red 	= 1E2;                              /* Fraction of iterations that is saved	*/
 extern const double dt 	= 1E3/res;							/* Duration of a iteration step in ms	*/
 extern const double h	= sqrt(dt);							/* Square root of dt for SRK iteration	*/
 /****************************************************************************************************/

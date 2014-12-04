@@ -44,6 +44,7 @@ public:
 	/* Empty constructor for compiling */
 	Stim(void);
 
+    /* Constructor with references and stimulation variables */
 	Stim(Cortical_Column& C, Thalamic_Column& T, double* var)
 	{ Cortex   = &C;
 	  Thalamus = &T;
@@ -63,7 +64,7 @@ private:
 	/* 0 == none 			*/
 	/* 1 == semi-periodic	*/
 	/* 2 == phase dependent */
-	int mode			= 0;
+    int     mode                    = 0;
 
 	/* Default values already in dt: E1==ms,  E4==s	*/
 	/* Stimulation strength 						*/
@@ -104,11 +105,23 @@ private:
 	/* If a stimulation event has occurred and there is a minimal time (pause) until the next one */
 	bool 	stimulation_paused 		= false;
 
+	/* In case of bursted stimulation start the bursts */
+	bool 	burst_started 			= false;
+
+	/* Length of a burst stimulus */
+	int 	burst_length 			= 10;
+
+	/* Length of silence between burst stimuli */
+	int		burst_ISI 				= 10;
+
 	/* Onset in time steps where no data is recorded, so stimulation has to be delayed */
 	int 	onset_correction		= 10E4;
 
 	/* Counter for number of stimuli that occurred within a stimulation event */
 	int 	count_stimuli 			= 1;
+
+	/* Counter for number of bursts per stimuli */
+	int 	count_bursts 			= 0;
 
 	/* Counter for stimulation duration since started*/
 	int 	count_duration			= 0;
@@ -120,7 +133,7 @@ private:
 	int 	count_pause 			= 0;
 
 	/* Old voltage value for minimum detection */
-	double 	Ve_old					= 0;
+    double 	Ve_old					= 0.0;
 
 	/* Pointer to columns */
 	Cortical_Column* Cortex;
@@ -169,6 +182,10 @@ void Stim::setup (double* var_stim) {
 	/* Scale time_between_stimuli from ms to dt */
 	time_between_stimuli 	= (int) var_stim[6] * res / 1000;
 
+	/* Scale the length of burst_length and burst_ISI from ms to dt*/
+    burst_length 			= (int) 6  * res / 1000;
+    burst_ISI 				= (int) 44 * res / 1000;
+
 	/* If ISI is fixed do not create RNG */
 	if (mode == 1) {
 		/* Set first time_to_stimuli to 1 sec after onset */
@@ -187,7 +204,7 @@ void Stim::setup (double* var_stim) {
 		/* Scale time_to_stimuli from ms to dt */
 		time_to_stimuli = (int) var_stim[7] * res / 1000;
 	}
-};
+}
 
 void Stim::check_stim	(int time) {
 	/* Check if stimulation should start */
@@ -272,19 +289,40 @@ void Stim::check_stim	(int time) {
 					count_stimuli = 1;
 				}
 			}
+            /* Update counter */
 			count_to_start++;
 		}
 		break;
 	}
 
-	/* Wait to switch the stimulation off */
+    /* Actual stimulation protocols */
 	if(stimulation_started) {
+        /* Wait to switch the stimulation off */
 		if(count_duration==duration) {
 			stimulation_started 	= false;
+			burst_started 			= true;
 			count_duration			= 0;
+			count_bursts			= 0;
 			Thalamus->set_input(0.0);
 		}
+
 		count_duration++;
+		count_bursts++;
+
+		/* Switch stimulation on and off wrt burst parameters */
+		if(burst_started) {
+			if(count_bursts%burst_length==0) {
+				count_bursts 	= 0;
+				burst_started 	= false;
+				Thalamus->set_input(0.0);
+			}
+		} else {
+			if(count_bursts%burst_ISI==0) {
+				count_bursts 	= 0;
+                burst_started	= true;
+                Thalamus->set_input(strength);
+			}
+		}
 	}
 
 	/* Wait if there is a pause between stimulation events */
@@ -295,7 +333,7 @@ void Stim::check_stim	(int time) {
 		}
 		count_pause++;
 	}
-};
+}
 
 mxArray* Stim::get_marker(void) {
 	extern const int red;
@@ -309,7 +347,7 @@ mxArray* Stim::get_marker(void) {
 		Pr_Marker[i] = marker_stimulation [i]/red;
 	}
 	return Marker;
-};
+}
 
 /****************************************************************************************************/
 /*										 		end													*/
