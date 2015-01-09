@@ -51,7 +51,7 @@ void Thalamic_Column::set_RNG(void) {
 /****************************************************************************************************/
 /* Thalamic relay (TC) firing rate */
 double Thalamic_Column::get_Qt	(int N) const{
-	_SWITCH((Vt))
+    _SWITCH((Vt))
 	double q = Qt_max/ (1 + exp(-C1 * (var_Vt - theta_t) / sigma_t));
 	return q;
 }

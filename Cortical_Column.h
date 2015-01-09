@@ -65,40 +65,40 @@ public:
 	/* Return axonal flux */
 	double 	get_phi		(int N) const {_SWITCH((phi)); return var_phi;}
 
-	/* Initialize the RNGs */
-	void 	set_RNG		(void);
-
-	/* Firing rates */
-	double 	get_Qe		(int) const;
-	double 	get_Qi		(int) const;
-
-	/* Currents */
-	double 	I_ee		(int) const;
-	double 	I_ei		(int) const;
-	double 	I_ie		(int) const;
-	double 	I_ii		(int) const;
-	double 	I_L_e		(int) const;
-	double 	I_L_i		(int) const;
-	double 	I_KNa		(int) const;
-
-	/* Potassium pump */
-	double 	Na_pump		(int) const;
-
-	/* Noise function */
-	double 	noise_xRK 	(int, int) const;
-
-	/* ODE functions */
-	void 	set_RK		(int);
-	void 	add_RK	 	(void);
-
 	/* Data storage access */
 	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 4));
+
+    /* ODE functions */
+    void 	set_RK		(int);
+    void 	add_RK	 	(void);
 
 	/* Stimulation protocol access */
 	friend class 	Stim;
 
 private:
-	/* Population variables */
+    /* Initialize the RNGs */
+    void 	set_RNG		(void);
+
+    /* Firing rates */
+    double 	get_Qe		(int) const;
+    double 	get_Qi		(int) const;
+
+    /* Currents */
+    double 	I_ee		(int) const;
+    double 	I_ei		(int) const;
+    double 	I_ie		(int) const;
+    double 	I_ii		(int) const;
+    double 	I_L_e		(int) const;
+    double 	I_L_i		(int) const;
+    double 	I_KNa		(int) const;
+
+    /* Potassium pump */
+    double 	Na_pump		(int) const;
+
+    /* Noise function */
+    double 	noise_xRK 	(int, int) const;
+
+    /* Population variables */
 	vector<double> 	Ve		= _INIT(E_L_e),		/* excitatory membrane voltage						*/
 					Vi		= _INIT(E_L_i),		/* inhibitory membrane voltage						*/
 					Na		= _INIT(Na_eq),		/* Na concentration									*/
@@ -141,9 +141,9 @@ private:
 
 	/* parameters of the firing adaption */
 	const double 	alpha_Na	= 2;			/* Sodium influx per spike			in mM ms 	*/
-	const double 	tau_Na		= 1.7;			/* Sodium time constant 			in ms 		*/
+    const double 	tau_Na		= 2;			/* Sodium time constant 			in ms 		*/
 
-	const double 	R_pump   	= 0.09;        	/* Na-K pump  constant              in mM/ms 	*/
+    const double 	R_pump   	= 0.09;        	/* Na-K pump  constant              in mM/ms 	*/
 	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration              in mM 		*/
 
 	/* PSP rise time in ms^-1 */
@@ -174,14 +174,14 @@ private:
 
 	/* Noise parameters in ms^-1 */
 	const double 	mphi		= 0E-3;
-	const double	dphi		= 60E-3;;
+    const double	dphi		= 60E-3;
 	double			input		= 0.0;
 
 	/* Connectivities (dimensionless) */
-	const double 	N_ee		= 120;
+    const double 	N_ee		= 125;
 	const double 	N_ei		= 72;
-	const double 	N_ie		= 90;
-	const double 	N_ii		= 90;
+    const double 	N_ie		= 100;
+    const double 	N_ii		= 100;
 	const double 	N_te		= 0;
 	const double 	N_ti		= 0;
 

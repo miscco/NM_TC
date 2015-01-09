@@ -32,8 +32,8 @@
 /****************************************************************************************************/
 inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, double* Ve, double* Vt, double* Ca, double* ah) {
 	Ve 	[counter] = Cortex.Ve		[0];
-    Vt 	[counter] = Thalamus.Vt		[0];
-    Ca 	[counter] = Thalamus.phi	[0];
+    Vt 	[counter] = Cortex.N_te*Thalamus.phi		[0];
+    Ca 	[counter] = Cortex.Phi_ee	[0];
     ah 	[counter] = Thalamus.act_h	();
 }
 /****************************************************************************************************/
@@ -48,7 +48,8 @@ mxArray* SetMexArray(int N, int M) {
     mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
     mxSetM(Array, N);
     mxSetN(Array, M);
-    mxSetData(Array, mxMalloc(sizeof(double)*M*N));
+    #pragma omp critical
+    {mxSetData(Array, mxMalloc(sizeof(double)*M*N));}
     return Array;
 }
 /****************************************************************************************************/

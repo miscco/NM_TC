@@ -61,63 +61,64 @@ public:
 	  N_et 		(Con[0]),	N_er	(Con[1])
 	{set_RNG();}
 
-	/* Get the pointer to the cortical module */
-	void	get_Cortex	(Cortical_Column& C) {Cortex = &C;}
+    /* Get the pointer to the cortical module */
+    void	get_Cortex	(Cortical_Column& C) {Cortex = &C;}
 
-	/* Set strength of input */
-	void	set_input	(double I) {input = I;}
+    /* Get axonal flux */
+    double 	get_phi		(int N) const {_SWITCH((phi)); return var_phi;}
 
-	/* Get axonal flux */
-	double 	get_phi		(int N) const {_SWITCH((phi)); return var_phi;}
-
-	/* Initialize the RNGs */
-	void 	set_RNG		(void);
-
-	/* Firing rates */
-	double 	get_Qt		(int) const;
-	double 	get_Qr		(int) const;
-
-	/* Synaptic currents */
-	double 	I_et		(int) const;
-	double 	I_it		(int) const;
-	double 	I_er		(int) const;
-	double 	I_ir		(int) const;
-
-	/* Activation functions */
-	double  m_inf_T_t	(int) const;
-	double  m_inf_T_r	(int) const;
-	double  m_inf_h		(int) const;
-	double  tau_m_h		(int) const;
-	double  P_H			(int) const;
-	double  act_h		(void)const;
-
-	/* Deactivation functions */
-	double  h_inf_T_t	(int) const;
-	double  h_inf_T_r	(int) const;
-	double  tau_h_T_t	(int) const;
-	double  tau_h_T_r	(int) const;
-
-	/* Currents */
-	double 	I_L_t		(int) const;
-	double 	I_L_r		(int) const;
-	double 	I_LK_t		(int) const;
-	double 	I_LK_r		(int) const;
-	double 	I_T_t		(int) const;
-	double 	I_T_r		(int) const;
-	double 	I_h			(int) const;
-
-	/* Noise functions */
-	double 	noise_xRK 	(int) const;
-
-	/* ODE functions */
-	void 	set_RK		(int);
-	void 	add_RK	 	(void);
+    /* ODE functions */
+    void 	set_RK		(int);
+    void 	add_RK	 	(void);
 
 	/* Data storage  access */
 	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 4));
 
+    /* Set strength of input */
+    void	set_input	(double I) {input = I;}
+
 private:
-	/* Population variables */
+
+    /* Initialize the RNGs */
+    void 	set_RNG		(void);
+
+    /* Firing rates */
+    double 	get_Qt		(int) const;
+    double 	get_Qr		(int) const;
+
+    /* Synaptic currents */
+    double 	I_et		(int) const;
+    double 	I_it		(int) const;
+    double 	I_er		(int) const;
+    double 	I_ir		(int) const;
+
+    /* Activation functions */
+    double  m_inf_T_t	(int) const;
+    double  m_inf_T_r	(int) const;
+    double  m_inf_h		(int) const;
+    double  tau_m_h		(int) const;
+    double  P_H			(int) const;
+    double  act_h		(void)const;
+
+    /* Deactivation functions */
+    double  h_inf_T_t	(int) const;
+    double  h_inf_T_r	(int) const;
+    double  tau_h_T_t	(int) const;
+    double  tau_h_T_r	(int) const;
+
+    /* Currents */
+    double 	I_L_t		(int) const;
+    double 	I_L_r		(int) const;
+    double 	I_LK_t		(int) const;
+    double 	I_LK_r		(int) const;
+    double 	I_T_t		(int) const;
+    double 	I_T_r		(int) const;
+    double 	I_h			(int) const;
+
+    /* Noise functions */
+    double 	noise_xRK 	(int) const;
+
+    /* Population variables */
 	vector<double> 	Vt		= _INIT(E_L_t),		/* TC membrane voltage								*/
 					Vr		= _INIT(E_L_r),		/* RE membrane voltage								*/
 					Ca		= _INIT(Ca_0),		/* Calcium concentration of TC population			*/

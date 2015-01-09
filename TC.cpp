@@ -103,8 +103,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	plhs[1] = Vt;
 	plhs[2] = Ca;
 	plhs[3] = ah;
-	plhs[4] = Stimulation.get_marker();
-return;
+    plhs[4] = Stimulation.get_marker();
+
+    return;
 }
 /****************************************************************************************************/
 /*										 		end													*/

@@ -105,8 +105,11 @@ private:
 	/* If a stimulation event has occurred and there is a minimal time (pause) until the next one */
 	bool 	stimulation_paused 		= false;
 
+    /* If burst mode is enabled */
+    bool    burst_enabled            = false;
+
 	/* In case of bursted stimulation start the bursts */
-	bool 	burst_started 			= false;
+    bool 	burst_started 			= true;
 
 	/* Length of a burst stimulus */
 	int 	burst_length 			= 10;
@@ -183,8 +186,8 @@ void Stim::setup (double* var_stim) {
 	time_between_stimuli 	= (int) var_stim[6] * res / 1000;
 
 	/* Scale the length of burst_length and burst_ISI from ms to dt*/
-    burst_length 			= (int) 6  * res / 1000;
-    burst_ISI 				= (int) 44 * res / 1000;
+    burst_length 			= (int) 2  * res / 1000;
+    burst_ISI 				= (int) 28 * res / 1000;
 
 	/* If ISI is fixed do not create RNG */
 	if (mode == 1) {
@@ -310,19 +313,21 @@ void Stim::check_stim	(int time) {
 		count_bursts++;
 
 		/* Switch stimulation on and off wrt burst parameters */
-		if(burst_started) {
-			if(count_bursts%burst_length==0) {
-				count_bursts 	= 0;
-				burst_started 	= false;
-				Thalamus->set_input(0.0);
-			}
-		} else {
-			if(count_bursts%burst_ISI==0) {
-				count_bursts 	= 0;
-                burst_started	= true;
-                Thalamus->set_input(strength);
-			}
-		}
+        if(burst_enabled) {
+            if(burst_started) {
+                if(count_bursts%burst_length==0) {
+                    count_bursts 	= 0;
+                    burst_started 	= false;
+                    Thalamus->set_input(0.0);
+                }
+            } else {
+                if(count_bursts%burst_ISI==0) {
+                    count_bursts 	= 0;
+                    burst_started	= true;
+                    Thalamus->set_input(strength);
+                }
+            }
+        }
 	}
 
 	/* Wait if there is a pause between stimulation events */
