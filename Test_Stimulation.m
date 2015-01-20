@@ -1,8 +1,8 @@
 % mex command is given by: 
 
-function Test_Parameters(type)
+function Test_Stimulation(type)
 if nargin == 0
-    type = 2;
+    type = 1;
 end
 
 
@@ -17,41 +17,49 @@ end
 if(isempty(strfind(path, '/nfshome/schellen/Documents/MATLAB/Tools/boundedline')))
     addpath('~/Documents/MATLAB/Tools/boundedline');
 end
+  
+Param_Cortex        = [6;          % sigma_e
+                       2.05;         % g_KNa
+                       120E-3];     % dphi
+                       
+Param_Thalamus      = [0.052;       % g_h
+                       0.02];       % g_LK
 
-if type == 1    
-    Param_Cortex        = [4.7;         % sigma_e
-                           1.33;        % g_KNa
-                           120E-3];     % dphi
-                       
-    Param_Thalamus      = [0.051;       % g_h
-                           0.024];      % g_LK  
-                       
-    fn_data = '/nfshome/schellen/Documents/MATLAB/TC_model/Data/SO_Average_N3';
-    Model_Range_ERP = [-75, -45]; 
-    Model_Range_FSP = [-0.25, 1.25]; 
-    Data_Range_ERP  = [-75, 35]; 
-    Data_Range_FSP  = [2, 5]; 
-    xRange          = -0.5:0.25:1.5;
-else    
-    Param_Cortex        = [6;          % sigma_e
-                           2.0;         % g_KNa
-                           120E-3];     % dphi
-                       
-    Param_Thalamus      = [0.051;       % g_h
-                           0.02];       % g_LK
-                       
-    fn_data = '/nfshome/schellen/Documents/MATLAB/TC_model/Data/SO_Average_N3';
-    Model_Range_ERP = [-75, -45]; 
-    Model_Range_FSP = [-0.25, 1.25]; 
-    Data_Range_ERP  = [-75, 35]; 
-    Data_Range_FSP  = [2, 5]; 
-    xRange          = -0.5:0.25:1.5;
+Connectivity        = [ 2.5;        % N_et
+                        2.5;        % N_er
+                        5;          % N_te
+                        5];        % N_ti   
+                    
+switch type
+    case 1;
+        fn_data         = '/nfshome/schellen/Documents/MATLAB/TC_model/Data/Open_Loop_3Klick.mat';
+        Model_xRange    = [-70, -45]; 
+        Model_Range_FSP = [-0.25, 1.25]; 
+        Data_xRange     = [-80, 25]; 
+        Data_Range_FSP  = [-4, 8]; 
+        xRange          = -0.5:0.5:4;
+    case 2;
+        fn_data         = '/nfshome/schellen/Documents/MATLAB/TC_model/Data/Closed_Loop_2Klick.mat';
+        Model_xRange = [-75, -45]; 
+        Model_Range_FSP = [-0.25, 1.25]; 
+        Data_xRange  = [-130, 80]; 
+        Data_Range_FSP  = [-2, 4]; 
+        xRange          = -1:0.5:3.5;
+    case 3;        
+        fn_data         = '/nfshome/schellen/Documents/MATLAB/TC_model/Data/Closed_Loop_3Klick.mat';
+        Model_xRange = [-75, -45]; 
+        Model_Range_FSP = [-0.25, 1.25]; 
+        Data_xRange  = [-130, 80]; 
+        Data_Range_FSP  = [-2, 4]; 
+        xRange          = -1:0.5:3.5;
+    case 4;
+        fn_data         = 'Data/ClosedLoopStim.mat';
+        Model_xRange = [-75, -45]; 
+        Model_Range_FSP = [-0.25, 1.25]; 
+        Data_xRange  = [-80, 50]; 
+        Data_Range_FSP  = [2., 6]; 
+        xRange          = -1:0.5:3;
 end
-                        
-Connectivity            = [ 2.5;        % N_et
-                            2.5;        % N_er
-                            5;          % N_te
-                            15];        % N_ti   
                         
 load(fn_data);
 
@@ -61,7 +69,7 @@ load(fn_data);
 % 1 == semi-periodic
 % 2 == phase dependend
     
-var_stim    = [ 0;          % mode of stimulation
+var_stim    = [ 1;          % mode of stimulation
                 40;         % strength of the stimulus              in Hz (spikes per second)
                 100;       	% duration of the stimulus              in ms
                 5;          % time between stimulation events       in s  (ISI)
@@ -72,32 +80,27 @@ var_stim    = [ 0;          % mode of stimulation
 
 T       	= 300;           % duration of the simulation
 
-[Ve, Vi, Vt, Vr] = TC(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
+[Ve, Vi, Vt, Vr, Marker_Stim] = TC(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
 Fs          = length(Ve)/T;
-
-
-Ve_low      = ft_preproc_bandpassfilter(Ve, Fs, [0.25,4], 513,  'fir') + mean(Ve);
 Ve_FSP      = ft_preproc_hilbert(ft_preproc_bandpassfilter(Ve, Fs, [12, 15], 513, 'fir'), 'abs').^2;
 
 % Search for peaks
-[~, x_SO]   = findpeaks(-Ve_low, 'MINPEAKHEIGHT', 68, 'MINPEAKDISTANCE', 0.2*Fs);
+x_SO        = Marker_Stim;
 
 % Remove those events, that are too close to begin/end
 x_SO        = x_SO(x_SO<(T-2)*Fs); 
 x_SO        = x_SO(x_SO>    2*Fs);
-x_SO        = x_SO-3; % fix a different min position wrt data   
 
 % Set the variables 
 N_Stim      = length(x_SO);
-Range_ERP   = [-0.5, 1.5];
-time_event  = linspace(Range_ERP(1), Range_ERP(2), (Range_ERP(2)-Range_ERP(1))*Fs);
+time_event  = linspace(xRange(1), xRange(end), (xRange(end)-xRange(1))*Fs);
 Events      = zeros(length(time_event), N_Stim);
 Events_FSP  = zeros(length(time_event), N_Stim);
 
 % Segmentation
 for i=1:N_Stim
-    Events(:,i)     =  Ve    ((x_SO(i)+Range_ERP(1)*Fs)+1:(x_SO(i)+Range_ERP(2)*Fs));
-    Events_FSP(:,i) =  Ve_FSP((x_SO(i)+Range_ERP(1)*Fs)+1:(x_SO(i)+Range_ERP(2)*Fs));
+    Events(:,i)     =  Ve    ((x_SO(i)+xRange(1)*Fs)+1:(x_SO(i)+xRange(end)*Fs));
+    Events_FSP(:,i) =  Ve_FSP((x_SO(i)+xRange(1)*Fs)+1:(x_SO(i)+xRange(end)*Fs));
 end
 
 mean_ERP_model= mean(Events,    2); %#ok<*NASGU>
@@ -116,15 +119,15 @@ Option_Name = { 'ylim';
                 'ycolor';
                 'xtick'}';
             
-Option_Model_ERP = {Model_Range_ERP;
-                    linspace(Model_Range_ERP(1), Model_Range_ERP(2), 5);
-                    linspace(Model_Range_ERP(1), Model_Range_ERP(2), 5);
+Option_Model_ERP = {Model_xRange;
+                    linspace(Model_xRange(1), Model_xRange(2), 5);
+                    linspace(Model_xRange(1), Model_xRange(2), 5);
                     'black';
                     xRange}'; %#ok<*NBRAK>
 
-Option_Data_ERP  = {Data_Range_ERP;
-                    linspace(Data_Range_ERP(1), Data_Range_ERP(2), 5);
-                    linspace(Data_Range_ERP(1), Data_Range_ERP(2), 5);
+Option_Data_ERP  = {Data_xRange;
+                    linspace(Data_xRange(1), Data_xRange(2), 5);
+                    linspace(Data_xRange(1), Data_xRange(2), 5);
                     'black';
                     xRange}';
 
@@ -158,17 +161,17 @@ title(['Vr with a mean of :',num2str(mean(Vr))]);
 figure(2)
 clf
 subplot(211)
-[AX1, ~, ~] = plotyy(time_events,[mean_SO_data, sem_SO_data],time_events,[mean_ERP_model, sd_ERP_model], BL_data, BL_model);
+[AX1, ~, ~] = plotyy(time_events,[mean_ERP_data, sd_ERP_data],time_events,[mean_ERP_model, sd_ERP_model], BL_data, BL_model);
 set(AX1(1), Option_Name, Option_Data_ERP);
 set(AX1(2), Option_Name, Option_Model_ERP);
 ylabel(AX1(1),'EEG [$\mu$V]');
 ylabel(AX1(2),'$V_{e}$ [mV]');
 title([num2str(N_Stim), ' Events'])
 subplot(212)
-[AX1, ~, ~] = plotyy(time_events,[mean_FSP_data, sem_FSP_data],time_events,[mean_FSP_model, sd_FSP_model], BL_data, BL_model);
-set(AX1(1), Option_Name, Option_Data_FSP);
-set(AX1(2), Option_Name, Option_Model_FSP);
-ylabel(AX1(1),'FSP data [a.u.]');
-ylabel(AX1(2),'$FSP model$ [a.u.]');
+[AX2, ~, ~] = plotyy(time_events,[mean_FSP_data, sd_FSP_data],time_events,[mean_FSP_model, sd_FSP_model], BL_data, BL_model);
+set(AX2(1), Option_Name, Option_Data_FSP);
+set(AX2(2), Option_Name, Option_Model_FSP);
+ylabel(AX2(1),'FSP data [a.u.]');
+ylabel(AX2(2),'$FSP model$ [a.u.]');
 title([num2str(N_Stim), ' Events'])
 end

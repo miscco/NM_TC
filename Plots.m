@@ -3,19 +3,19 @@
 
 function Plots(type)
 if nargin == 0
-    type = 1;
+    type = 2;
 end
 
 if type == 1    
     Param_Cortex        = [4.7;         % sigma_e
-                           1.43;        % g_KNa
+                           1.33;        % g_KNa
                            120E-3];     % dphi
                        
     Param_Thalamus      = [0.051;       % g_h
                            0.024];      % g_LK                       
 else    
     Param_Cortex        = [6;          % sigma_e
-                           2.15;         % g_KNa
+                           2.05;         % g_KNa
                            120E-3];     % dphi
                        
     Param_Thalamus      = [0.051;       % g_h
@@ -24,8 +24,8 @@ end
                         
 Connectivity            = [ 2.5;        % N_et
                             2.5;        % N_er
-                            6;          % N_te
-                            15];        % N_ti   
+                            5;          % N_te
+                            10];        % N_ti   
 
 % stimulation parameters
 % first number is the mode of stimulation
@@ -49,7 +49,7 @@ T       	= 30;           % duration of the simulation
 L        = length(Vt);
 timeaxis = linspace(0,T,L);
 
-%figure(1)
+figure(1)
 subplot(411), plot(timeaxis,Ve)
 title('Pyramidal membrane voltage'), 
 xlabel('Time in s'), 

@@ -141,7 +141,7 @@ private:
 
 	/* parameters of the firing adaption */
 	const double 	alpha_Na	= 2;			/* Sodium influx per spike			in mM ms 	*/
-    const double 	tau_Na		= 2;			/* Sodium time constant 			in ms 		*/
+    const double 	tau_Na		= 1.7;			/* Sodium time constant 			in ms 		*/
 
     const double 	R_pump   	= 0.09;        	/* Na-K pump  constant              in mM/ms 	*/
 	const double 	Na_eq    	= 9.5;         	/* Na-eq concentration              in mM 		*/
@@ -151,7 +151,7 @@ private:
 	const double 	gamma_i		= 58.6E-3;
 
 	/* Axonal flux time constant */
-	const double 	nu			= 120E-3;
+    const double 	nu			= 60E-3;
 
 	/* Conductivities in mS/cm^-2 */
 	/* Leak */
@@ -166,7 +166,7 @@ private:
 	const double 	E_GABA  	= -70;
 
 	/* Leak */
-	const double 	E_L_e 		= -66;
+    const double 	E_L_e 		= -64;
 	const double 	E_L_i 		= -64;
 
 	/* Potassium */
@@ -178,10 +178,10 @@ private:
 	double			input		= 0.0;
 
 	/* Connectivities (dimensionless) */
-    const double 	N_ee		= 125;
+    const double 	N_ee		= 115;
 	const double 	N_ei		= 72;
-    const double 	N_ie		= 100;
-    const double 	N_ii		= 100;
+    const double 	N_ie		= 90;
+    const double 	N_ii		= 90;
 	const double 	N_te		= 0;
 	const double 	N_ti		= 0;
 
