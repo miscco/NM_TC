@@ -19,11 +19,11 @@ else
                            120E-3];     % dphi
                        
     Param_Thalamus      = [0.051;       % g_h
-                           0.02];       % g_LK
+                           0.020];       % g_LK
 end
                         
-Connectivity            = [ 2.5;        % N_et
-                            2.5;        % N_er
+Connectivity            = [ 2.6;        % N_et
+                            2.6;        % N_er
                             5;          % N_te
                             10];        % N_ti   
 

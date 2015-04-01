@@ -38,7 +38,7 @@ else
                            120E-3];     % dphi
                        
     Param_Thalamus      = [0.051;       % g_h
-                           0.02];       % g_LK
+                           0.0205];       % g_LK
                        
     fn_data = '/nfshome/schellen/Documents/MATLAB/TC_model/Data/SO_Average_N3';
     Model_Range_ERP = [-75, -45]; 
@@ -50,7 +50,7 @@ end
                         
 Connectivity            = [ 2.5;        % N_et
                             2.5;        % N_er
-                            5;          % N_te
+                            15;          % N_te
                             15];        % N_ti   
                         
 load(fn_data);

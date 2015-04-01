@@ -185,7 +185,7 @@ private:
 	const double	g_T_r		= 2.3;
 
 	/* h current */
-	const double	g_h			= 0.07;
+	const double	g_h			= 0.051;
 
 	/* Reversal potentials in mV */
 	/* Synaptic */
@@ -208,7 +208,7 @@ private:
 	/* Calcium parameters */
 	const double	alpha_Ca	= -51.8E-6;			/* influx per spike in nmol		*/
 	const double	tau_Ca		= 10;				/* calcium time constant in ms	*/
-	const double	Ca_0		= 2.4E-4;				/* resting concentration 		*/
+	const double	Ca_0		= 2.4E-4;			/* resting concentration 		*/
 
 	/* I_h activation parameters */
 	const double 	k1			= 2.5E7;
@@ -228,8 +228,8 @@ private:
 	const double 	N_tr		= 3;
     const double 	N_rt		= 5;
     const double 	N_rr		= 19;
-	const double 	N_et		= 5;
-	const double 	N_er		= 5;
+	const double 	N_et		= 2.5;
+	const double 	N_er		= 2.5;
 
 	/* Pointer to cortical column */
 	Cortical_Column* Cortex;

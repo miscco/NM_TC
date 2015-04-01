@@ -151,7 +151,7 @@ private:
 	const double 	gamma_i		= 58.6E-3;
 
 	/* Axonal flux time constant */
-    const double 	nu			= 60E-3;
+	const double 	nu			= 120E-3;
 
 	/* Conductivities in mS/cm^-2 */
 	/* Leak */
@@ -182,8 +182,8 @@ private:
 	const double 	N_ei		= 72;
     const double 	N_ie		= 90;
     const double 	N_ii		= 90;
-	const double 	N_te		= 0;
-	const double 	N_ti		= 0;
+	const double 	N_te		= 2.5;
+	const double 	N_ti		= 2.5;
 
 	/* Pointer to thalamic column */
 	Thalamic_Column* Thalamus;
