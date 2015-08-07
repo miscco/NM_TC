@@ -30,11 +30,11 @@
 /****************************************************************************************************/
 /*											Save data												*/
 /****************************************************************************************************/
-inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, double* Ve, double* Vt, double* Ca, double* ah) {
-	Ve 	[counter] = Cortex.Ve		[0];
-    Vt 	[counter] = Thalamus.Vt		[0];
-    Ca 	[counter] = Cortex.Phi_ee	[0];
-    ah 	[counter] = Thalamus.act_h	();
+inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, vector<double*> Data) {
+	Data[0][counter] = Cortex.Ve		[0];
+	Data[1][counter] = Thalamus.Vt		[0];
+	Data[2][counter] = Thalamus.Ca		[0];
+	Data[3][counter] = Thalamus.act_h	();
 }
 /****************************************************************************************************/
 /*										 		end													*/
@@ -44,13 +44,13 @@ inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thal
 /****************************************************************************************************/
 /*									Create MATLAB data container									*/
 /****************************************************************************************************/
-mxArray* SetMexArray(int N, int M) {
-    mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
-    mxSetM(Array, N);
-    mxSetN(Array, M);
-    #pragma omp critical
-    {mxSetData(Array, mxMalloc(sizeof(double)*M*N));}
-    return Array;
+mxArray* GetMexArray(int N, int M) {
+	mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
+	mxSetM(Array, N);
+	mxSetN(Array, M);
+	#pragma omp critical
+	{mxSetData(Array, mxMalloc(sizeof(double)*M*N));}
+	return Array;
 }
 /****************************************************************************************************/
 /*										 		end													*/

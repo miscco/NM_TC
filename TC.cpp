@@ -65,8 +65,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	double* var_stim	 	= mxGetPr (prhs[4]);			/* Parameters of stimulation protocol	*/
 
 	/* Initialize the populations */
-	Cortical_Column Cortex		(Param_Cortex, 	 Connections);
-	Thalamic_Column Thalamus	(Param_Thalamus, Connections);
+	Cortical_Column Cortex	 = Cortical_Column(Param_Cortex,   Connections);
+	Thalamic_Column Thalamus = Thalamic_Column(Param_Thalamus, Connections);
 
 	/* Link both modules */
 	Cortex.get_Thalamus(Thalamus);
@@ -76,16 +76,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	Stim	Stimulation(Cortex, Thalamus, var_stim);
 
 	/* Create data containers */
-	mxArray* Ve		= SetMexArray(1, T*res/red);
-	mxArray* Vt		= SetMexArray(1, T*res/red);
-	mxArray* Ca		= SetMexArray(1, T*res/red);
-	mxArray* ah		= SetMexArray(1, T*res/red);
+	vector<mxArray*> Data;
+	Data.push_back(GetMexArray(1, T*res/red));	// Vt
+	Data.push_back(GetMexArray(1, T*res/red));	// Vr
+	Data.push_back(GetMexArray(1, T*res/red));	// Ca
+	Data.push_back(GetMexArray(1, T*res/red));	// act_h
 
 	/* Pointer to the actual data block */
-	double* Pr_Ve	= mxGetPr(Ve);
-	double* Pr_Vt	= mxGetPr(Vt);
-	double* Pr_Ca	= mxGetPr(Ca);
-	double* Pr_ah	= mxGetPr(ah);
+	vector<double*> pData(Data.size(), NULL);
+	for(unsigned i=0; i<Data.size(); ++i)
+		pData[i] = mxGetPr(Data[i]);
 
 	/* Simulation */
 	int count = 0;
@@ -93,19 +93,18 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		ODE (Cortex, Thalamus);
 		Stimulation.check_stim(t);
 		if(t>=onset*res && t%red==0){
-			get_data(count, Cortex, Thalamus, Pr_Ve, Pr_Vt, Pr_Ca, Pr_ah);
+			get_data(count, Cortex, Thalamus,  pData);
 			++count;
 		}
 	}
 
 	/* Output of the simulation */
-	plhs[0] = Ve;
-	plhs[1] = Vt;
-	plhs[2] = Ca;
-	plhs[3] = ah;
-    plhs[4] = Stimulation.get_marker();
+	/* Return the data containers */
+	for(unsigned i=0; i<Data.size(); ++i)
+		plhs[i] = Data[i];
+	plhs[Data.size()] = Stimulation.get_marker();
 
-    return;
+	return;
 }
 /****************************************************************************************************/
 /*										 		end													*/

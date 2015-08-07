@@ -29,7 +29,6 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include "macros.h"
 #include "Cortical_Column.h"
 using std::vector;
 
@@ -47,6 +46,17 @@ typedef boost::variate_generator<ENG,DIST> 	GEN;    /* Variate generator	*/
 
 
 /****************************************************************************************************/
+/*									Macro for vector initialization									*/
+/****************************************************************************************************/
+#ifndef _INIT
+#define _INIT(x)	{x, 0.0, 0.0, 0.0, 0.0}
+#endif
+/****************************************************************************************************/
+/*										 		end			 										*/
+/****************************************************************************************************/
+
+
+/****************************************************************************************************/
 /*								Implementation of the thalamic module 								*/
 /****************************************************************************************************/
 class Thalamic_Column {
@@ -57,86 +67,87 @@ public:
 
 	/* Constructor for simulation */
 	Thalamic_Column(double* Param, double* Con)
-	: g_LK_t	(Param[1]),	g_LK_r	(Param[1]),	g_h (Param[0]),
+	: g_LK	(Param[1]),	g_h (Param[0]),
 	  N_et 		(Con[0]),	N_er	(Con[1])
 	{set_RNG();}
 
-    /* Get the pointer to the cortical module */
-    void	get_Cortex	(Cortical_Column& C) {Cortex = &C;}
+	/* Get the pointer to the cortical module */
+	void	get_Cortex	(Cortical_Column& C) {Cortex = &C;}
 
-    /* Get axonal flux */
-    double 	get_phi		(int N) const {_SWITCH((phi)); return var_phi;}
-
-    /* ODE functions */
-    void 	set_RK		(int);
-    void 	add_RK	 	(void);
+	/* ODE functions */
+	void 	set_RK		(int);
+	void 	add_RK	 	(void);
 
 	/* Data storage  access */
-	friend void get_data (int, Cortical_Column&, Thalamic_Column&, _REPEAT(double*, 4));
+	friend void get_data (int, Cortical_Column&, Thalamic_Column&, vector<double*>);
+	friend class Cortical_Column;
 
-    /* Set strength of input */
-    void	set_input	(double I) {input = I;}
+	/* Set strength of input */
+	void	set_input	(double I) {input = I;}
 
 private:
+	/* Initialize the RNGs */
+	void 	set_RNG		(void);
 
-    /* Initialize the RNGs */
-    void 	set_RNG		(void);
+	/* Firing rates */
+	double 	get_Qt		(int) const;
+	double 	get_Qr		(int) const;
 
-    /* Firing rates */
-    double 	get_Qt		(int) const;
-    double 	get_Qr		(int) const;
+	/* Synaptic currents */
+	double 	I_et		(int) const;
+	double 	I_it		(int) const;
+	double 	I_er		(int) const;
+	double 	I_ir		(int) const;
 
-    /* Synaptic currents */
-    double 	I_et		(int) const;
-    double 	I_it		(int) const;
-    double 	I_er		(int) const;
-    double 	I_ir		(int) const;
+	/* Activation functions */
+	double  m_inf_T_t	(int) const;
+	double  m_inf_T_r	(int) const;
+	double  m_inf_h		(int) const;
+	double  tau_m_h		(int) const;
+	double  P_h			(int) const;
+	double  act_h		(void)const;
 
-    /* Activation functions */
-    double  m_inf_T_t	(int) const;
-    double  m_inf_T_r	(int) const;
-    double  m_inf_h		(int) const;
-    double  tau_m_h		(int) const;
-    double  P_H			(int) const;
-    double  act_h		(void)const;
+	double  m_inf_hs	(int) const;
+	double  tau_m_hs	(int) const;
+	double  tau_m_hf	(int) const;
 
-    /* Deactivation functions */
-    double  h_inf_T_t	(int) const;
-    double  h_inf_T_r	(int) const;
-    double  tau_h_T_t	(int) const;
-    double  tau_h_T_r	(int) const;
+	/* Deactivation functions */
+	double  h_inf_T_t	(int) const;
+	double  h_inf_T_r	(int) const;
+	double  tau_h_T_t	(int) const;
+	double  tau_h_T_r	(int) const;
 
-    /* Currents */
-    double 	I_L_t		(int) const;
-    double 	I_L_r		(int) const;
-    double 	I_LK_t		(int) const;
-    double 	I_LK_r		(int) const;
-    double 	I_T_t		(int) const;
-    double 	I_T_r		(int) const;
-    double 	I_h			(int) const;
+	/* Currents */
+	double 	I_L_t		(int) const;
+	double 	I_L_r		(int) const;
+	double 	I_LK_t		(int) const;
+	double 	I_LK_r		(int) const;
+	double 	I_T_t		(int) const;
+	double 	I_T_r		(int) const;
+	double 	I_h			(int) const;
 
-    /* Noise functions */
-    double 	noise_xRK 	(int) const;
+	/* Noise functions */
+	double 	noise_xRK 	(int,int) const;
+	double 	noise_aRK 	(int) const;
 
-    /* Population variables */
+	/* Population variables */
 	vector<double> 	Vt		= _INIT(E_L_t),		/* TC membrane voltage								*/
 					Vr		= _INIT(E_L_r),		/* RE membrane voltage								*/
 					Ca		= _INIT(Ca_0),		/* Calcium concentration of TC population			*/
-					Phi_tt	= _INIT(0.0),		/* PostSP from TC population to TC population		*/
-					Phi_tr	= _INIT(0.0),		/* PostSP from TC population to RE population		*/
-					Phi_rt	= _INIT(0.0),		/* PostSP from RE population to TC population		*/
-					Phi_rr	= _INIT(0.0),		/* PostSP from RE population to RE population		*/
-					phi		= _INIT(0.0),		/* axonal flux										*/
-					x_tt	= _INIT(0.0),		/* derivative of Phi_tt								*/
-					x_tr	= _INIT(0.0),		/* derivative of Phi_tr								*/
-					x_rt	= _INIT(0.0),		/* derivative of Phi_rt								*/
-					x_rr	= _INIT(0.0),		/* derivative of Phi_rr								*/
-					y		= _INIT(0.0),		/* derivative of phi								*/
+					y_tt	= _INIT(0.0),		/* PostSP from TC population to TC population		*/
+					y_tr	= _INIT(0.0),		/* PostSP from TC population to RE population		*/
+					y_rt	= _INIT(0.0),		/* PostSP from RE population to TC population		*/
+					y_rr	= _INIT(0.0),		/* PostSP from RE population to RE population		*/
+					y		= _INIT(0.0),		/* axonal flux										*/
+					x_tt	= _INIT(0.0),		/* derivative of y_tt								*/
+					x_tr	= _INIT(0.0),		/* derivative of y_tr								*/
+					x_rt	= _INIT(0.0),		/* derivative of y_rt								*/
+					x_rr	= _INIT(0.0),		/* derivative of y_rr								*/
+					x		= _INIT(0.0),		/* derivative of y									*/
 					h_T_t	= _INIT(0.0),		/* inactivation of T channel						*/
 					h_T_r	= _INIT(0.0),		/* inactivation of T channel						*/
 					m_h		= _INIT(0.0),		/* activation 	of h   channel						*/
-					m_h2	= _INIT(0.0),		/* activation 	of h   channel bound with protein 	*/
-					P_h		= _INIT(0.0);		/* messenger protein bound with calcium			 	*/
+					m_h2	= _INIT(0.0);		/* activation 	of h   channel bound with protein 	*/
 
 	/* Random number generators */
 	vector<GEN>		MTRands;
@@ -173,12 +184,10 @@ private:
 
 	/* Conductivities in mS/cm^-2 */
 	/* Leak current */
-	const double 	g_L_t  		= 1;
-	const double 	g_L_r  		= 1;
+	const double 	g_L  		= 1;
 
 	/* Potassium leak current */
-	const double 	g_LK_t 		= 0.02;
-	const double 	g_LK_r 		= 0.02;
+	const double 	g_LK 		= 0.02;
 
 	/* T current */
 	const double	g_T_t		= 3;
@@ -220,19 +229,22 @@ private:
 
 	/* Noise parameters in ms^-1 */
 	const double 	mphi		= 0E-3;
-    const double	dphi		= 10E-3;
+	const double	dphi		= 20E-1;
 	double			input		= 0.0;
-
 
 	/* Connectivities (dimensionless) */
 	const double 	N_tr		= 3;
-    const double 	N_rt		= 5;
-    const double 	N_rr		= 19;
-	const double 	N_et		= 2.5;
-	const double 	N_er		= 2.5;
+	const double 	N_rt		= 5;
+	const double 	N_rr		= 19;
+	const double 	N_et		= 2.6;
+	const double 	N_er		= 2.6;
 
 	/* Pointer to cortical column */
 	Cortical_Column* Cortex;
+
+	/* SRK integration parameters */
+	const vector<double> A = {0.5, 0.5, 1.0, 1.0};
+	const vector<double> B = {0.75, 0.75, 0.0, 0.0};
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

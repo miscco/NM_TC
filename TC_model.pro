@@ -8,7 +8,7 @@ SOURCES +=  Main.cpp \
 	    Thalamic_Column.cpp \
 	    TC.cpp
 
-HEADERS +=  macros.h \
+HEADERS +=  \
 	    ODE.h \
 	    saves.h \
 	    Cortical_Column.h \

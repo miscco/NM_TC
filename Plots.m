@@ -6,20 +6,22 @@ if nargin == 0
     type = 2;
 end
 
+%mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3 -lgopm" TC.cpp Cortical_Column.cpp Thalamic_Column.cpp
+
 if type == 1    
     Param_Cortex        = [4.7;         % sigma_e
                            1.33;        % g_KNa
-                           120E-3];     % dphi
+                           20E-1];      % dphi
                        
-    Param_Thalamus      = [0.051;       % g_h
+    Param_Thalamus      = [0.048;       % g_h
                            0.024];      % g_LK                       
 else    
-    Param_Cortex        = [6;          % sigma_e
-                           2.05;         % g_KNa
-                           120E-3];     % dphi
+    Param_Cortex        = [6;           % sigma_e
+                           2.05;        % g_KNa
+                           20E-1];      % dphi
                        
-    Param_Thalamus      = [0.051;       % g_h
-                           0.020];       % g_LK
+    Param_Thalamus      = [0.048;       % g_h
+                           0.02];      % g_LK
 end
                         
 Connectivity            = [ 2.6;        % N_et
@@ -49,7 +51,7 @@ T       	= 30;           % duration of the simulation
 L        = length(Vt);
 timeaxis = linspace(0,T,L);
 
-figure(1)
+figure(2)
 subplot(411), plot(timeaxis,Ve)
 title('Pyramidal membrane voltage'), 
 xlabel('Time in s'), 
@@ -67,12 +69,9 @@ title('Thalamic relay membrane voltage'),
 xlabel('Time in s'), 
 ylabel('V_{t} in mV')
 xlim([0,30]);
-ylim([-70,-35]);
+ylim([-80,-35]);
 % vertical line for markers
-for i=1:var_stim(6)
-    hx = graph2d.constantline(Marker_Stim/1E2+(i-1)*var_stim(7)/1E3,'ydata', get(gca,'ylim'),'xdata', get(gca,'xlim'), 'color', 'black', 'LineStyle', ':');
-    changedependvar(hx,'x');
-end
+
 
 subplot(413), plot(timeaxis,ah)
 title('Thalamic relay I_h activation'), 
@@ -81,10 +80,7 @@ ylabel('m_h in mV')
 xlim([0,30]);
 ylim(get(gca,'ylim'));
 % vertical line for markers
-for i=1:var_stim(6)
-    hx = graph2d.constantline(Marker_Stim/1E2+(i-1)*var_stim(7)/1E3,'ydata', get(gca,'ylim'),'xdata', get(gca,'xlim'), 'color', 'black', 'LineStyle', ':');
-    changedependvar(hx,'x');
-end
+
 
 subplot(414), plot(timeaxis,Ca)
 title('Thalamic relay ca concentration'), 
@@ -93,10 +89,6 @@ ylabel('[Ca] in \mu mol')
 xlim([0,30]);
 ylim(get(gca,'ylim'));
 % vertical line for markers
-for i=1:var_stim(6)
-    hx = graph2d.constantline(Marker_Stim/1E2+(i-1)*var_stim(7)/1E3,'ydata', get(gca,'ylim'),'xdata', get(gca,'xlim'), 'color', 'black', 'LineStyle', ':');
-    changedependvar(hx,'x');
-end
 
 % [Pxx,f]   = pwelch(Ve-mean(Ve),hamming(10*L/T), 2*L/T, [], L/T);
 % n         = find(f<=30, 1, 'last' );
