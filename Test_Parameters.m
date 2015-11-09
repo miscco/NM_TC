@@ -6,7 +6,7 @@ if nargin == 0
 end
 
 
-mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3 -lgopm" TC.cpp Cortical_Column.cpp Thalamic_Column.cpp
+mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" TC_mex.cpp Cortical_Column.cpp Thalamic_Column.cpp
 
 % Path to fieltrip preprocessing function
 if(isempty(strfind(path, '/nfshome/schellen/Documents/MATLAB/Tools/fieldtrip/preproc')))
@@ -72,7 +72,7 @@ var_stim    = [ 0;          % mode of stimulation
 
 T       	= 300;           % duration of the simulation
 
-[Ve, Vi, Vt, Vr] = TC(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
+[Ve, Vi, Vt, Vr] = TC_mex(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
 Fs          = length(Ve)/T;
 
 

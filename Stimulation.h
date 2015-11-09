@@ -1,24 +1,32 @@
 /*
-*	Copyright (c) 2014 Michael Schellenberger Costa
-*
-*	Permission is hereby granted, free of charge, to any person obtaining a copy
-*	of this software and associated documentation files (the "Software"), to deal
-*	in the Software without restriction, including without limitation the rights
-*	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-*	copies of the Software, and to permit persons to whom the Software is
-*	furnished to do so, subject to the following conditions:
-*
-*	The above copyright notice and this permission notice shall be included in
-*	all copies or substantial portions of the Software.
-*
-*	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-*	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-*	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-*	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-*	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-*	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-*	THE SOFTWARE.
-*/
+ *	Copyright (c) 2015 University of Lübeck
+ *
+ *	Permission is hereby granted, free of charge, to any person obtaining a copy
+ *	of this software and associated documentation files (the "Software"), to deal
+ *	in the Software without restriction, including without limitation the rights
+ *	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *	copies of the Software, and to permit persons to whom the Software is
+ *	furnished to do so, subject to the following conditions:
+ *
+ *	The above copyright notice and this permission notice shall be included in
+ *	all copies or substantial portions of the Software.
+ *
+ *	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *	THE SOFTWARE.
+ *
+ *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
+ *
+ *	Based on:	A thalamocortical neural mass model of the EEG during NREM sleep and its response
+ *				to auditory stimulation.
+ *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
+ *				JC Claussen.
+ *				PLoS Computational Biology In Review (in review).
+ */
 
 /****************************************************************************************************/
 /*								Implementation of the stimulation protocol							*/
@@ -44,7 +52,7 @@ public:
 	/* Empty constructor for compiling */
 	Stim(void);
 
-    /* Constructor with references and stimulation variables */
+	/* Constructor with references and stimulation variables */
 	Stim(Cortical_Column& C, Thalamic_Column& T, double* var)
 	{ Cortex   = &C;
 	  Thalamus = &T;
@@ -64,7 +72,7 @@ private:
 	/* 0 == none 			*/
 	/* 1 == semi-periodic	*/
 	/* 2 == phase dependent */
-    int     mode                    = 0;
+	int     mode                    = 0;
 
 	/* Default values already in dt: E1==ms,  E4==s	*/
 	/* Stimulation strength 						*/
@@ -105,11 +113,11 @@ private:
 	/* If a stimulation event has occurred and there is a minimal time (pause) until the next one */
 	bool 	stimulation_paused 		= false;
 
-    /* If burst mode is enabled */
-    bool    burst_enabled            = false;
+	/* If burst mode is enabled */
+	bool    burst_enabled            = false;
 
 	/* In case of bursted stimulation start the bursts */
-    bool 	burst_started 			= true;
+	bool 	burst_started 			= true;
 
 	/* Length of a burst stimulus */
 	int 	burst_length 			= 10;
@@ -136,7 +144,7 @@ private:
 	int 	count_pause 			= 0;
 
 	/* Old voltage value for minimum detection */
-    double 	Ve_old					= 0.0;
+	double 	Ve_old					= 0.0;
 
 	/* Pointer to columns */
 	Cortical_Column* Cortex;
@@ -186,8 +194,8 @@ void Stim::setup (double* var_stim) {
 	time_between_stimuli 	= (int) var_stim[6] * res / 1000;
 
 	/* Scale the length of burst_length and burst_ISI from ms to dt*/
-    burst_length 			= (int) 2  * res / 1000;
-    burst_ISI 				= (int) 28 * res / 1000;
+	burst_length 			= (int) 2  * res / 1000;
+	burst_ISI 				= (int) 28 * res / 1000;
 
 	/* If ISI is fixed do not create RNG */
 	if (mode == 1) {
@@ -292,15 +300,15 @@ void Stim::check_stim	(int time) {
 					count_stimuli = 1;
 				}
 			}
-            /* Update counter */
+			/* Update counter */
 			count_to_start++;
 		}
 		break;
 	}
 
-    /* Actual stimulation protocols */
+	/* Actual stimulation protocols */
 	if(stimulation_started) {
-        /* Wait to switch the stimulation off */
+		/* Wait to switch the stimulation off */
 		if(count_duration==duration) {
 			stimulation_started 	= false;
 			burst_started 			= true;
@@ -313,21 +321,21 @@ void Stim::check_stim	(int time) {
 		count_bursts++;
 
 		/* Switch stimulation on and off wrt burst parameters */
-        if(burst_enabled) {
-            if(burst_started) {
-                if(count_bursts%burst_length==0) {
-                    count_bursts 	= 0;
-                    burst_started 	= false;
-                    Thalamus->set_input(0.0);
-                }
-            } else {
-                if(count_bursts%burst_ISI==0) {
-                    count_bursts 	= 0;
-                    burst_started	= true;
-                    Thalamus->set_input(strength);
-                }
-            }
-        }
+		if(burst_enabled) {
+			if(burst_started) {
+				if(count_bursts%burst_length==0) {
+					count_bursts 	= 0;
+					burst_started 	= false;
+					Thalamus->set_input(0.0);
+				}
+			} else {
+				if(count_bursts%burst_ISI==0) {
+					count_bursts 	= 0;
+					burst_started	= true;
+					Thalamus->set_input(strength);
+				}
+			}
+		}
 	}
 
 	/* Wait if there is a pause between stimulation events */
@@ -343,9 +351,9 @@ void Stim::check_stim	(int time) {
 mxArray* Stim::get_marker(void) {
 	extern const int red;
 	mxArray* Marker	= mxCreateDoubleMatrix(0, 0, mxREAL);
-    mxSetM(Marker, 1);
-    mxSetN(Marker, marker_stimulation.size());
-    mxSetData(Marker, mxMalloc(sizeof(double)*marker_stimulation.size()));
+	mxSetM(Marker, 1);
+	mxSetN(Marker, marker_stimulation.size());
+	mxSetData(Marker, mxMalloc(sizeof(double)*marker_stimulation.size()));
 	double* Pr_Marker	= mxGetPr(Marker);
 	for(unsigned i=0; i<marker_stimulation.size(); ++i) {
 		/* Division by res transforms marker time from dt to sampling rate */

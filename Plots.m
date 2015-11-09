@@ -1,12 +1,12 @@
 % mex command is given by: 
-% mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3 -lgopm" TC.cpp Cortical_Column.cpp Thalamic_Column.cpp
+% mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" TC_mex.cpp Cortical_Column.cpp Thalamic_Column.cpp
 
 function Plots(type)
 if nargin == 0
     type = 2;
 end
 
-%mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3 -lgopm" TC.cpp Cortical_Column.cpp Thalamic_Column.cpp
+%mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" TC_mex.cpp Cortical_Column.cpp Thalamic_Column.cpp
 
 if type == 1    
     Param_Cortex        = [4.7;         % sigma_e
@@ -46,7 +46,7 @@ var_stim    = [ 0;          % mode of stimulation
 
 T       	= 30;           % duration of the simulation
 
-[Ve, Vt, Ca, ah, Marker_Stim] = TC(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
+[Ve, Vt, Ca, ah, Marker_Stim] = TC_mex(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
 
 L        = length(Vt);
 timeaxis = linspace(0,T,L);

@@ -6,7 +6,7 @@ if nargin == 0
 end
 
 
-mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3 -lgopm" TC.cpp Cortical_Column.cpp Thalamic_Column.cpp
+mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" TC_mex.cpp Cortical_Column.cpp Thalamic_Column.cpp
 
 % Path to fieltrip preprocessing function
 if(isempty(strfind(path, '/nfshome/schellen/Documents/MATLAB/Tools/fieldtrip/preproc')))
@@ -91,7 +91,7 @@ Option_Data_FSP  = {Data_Range_FSP;
                     xRange;
                     [xRange(1),xRange(end)]}';
 
-[Ve, Vt, Ca, ah, Marker_Stim] = TC(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
+[Ve, Vt, Ca, ah, Marker_Stim] = TC_mex(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
 Fs          = length(Ve)/T;
 Ve_FSP      = ft_preproc_hilbert(ft_preproc_bandpassfilter(Ve, Fs, [12, 15], 513, 'fir'), 'abs').^2;
 xRange      = [-1, 3]; 
