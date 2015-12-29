@@ -20,65 +20,62 @@
  *	THE SOFTWARE.
  *
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
+ *              Stefanie Gareis: gareis@inb.uni-luebeck.de
  *
- *	Based on:	A thalamocortical neural mass model of the EEG during NREM sleep and its response
- *				to auditory stimulation.
- *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
- *				JC Claussen.
- *				PLoS Computational Biology In Review (in review).
  */
 
 /****************************************************************************************************/
-/*		Main file for compilation tests																*/
+/*                                       Random number streams                                      */
 /****************************************************************************************************/
-#include <iostream>
-#include <ctime>
-#include "ODE.h"
-
+#pragma once
+#include <random>
 
 /****************************************************************************************************/
-/*										Fixed simulation settings									*/
+/*									Struct for normal distribution                                  */
 /****************************************************************************************************/
-extern const int T		= 30;								/* Simulation length s					*/
-extern const int res 	= 1E4;								/* Number of iteration steps per s		*/
-extern const int red 	= 1E2;                              /* Fraction of iterations that is saved	*/
-extern const double dt 	= 1E3/res;							/* Duration of a iteration step in ms	*/
-extern const double h	= sqrt(dt);							/* Square root of dt for SRK iteration	*/
+struct random_stream_normal
+{
+    /* Random number engine: Mersenne-Twister */
+    std::mt19937_64                     mt;
+    /* Random number generator: Normal-distribution */
+    std::normal_distribution<double>    norm_dist;
+
+    /* Constructors */
+    random_stream_normal(){}
+    random_stream_normal(double mean, double stddev)
+    : mt(rand()) , norm_dist(mean, stddev)
+    {}
+
+    /* Overwrites the function-call operator "( )" */
+    double operator( )(void) {
+        return norm_dist(mt);
+    }
+};
 /****************************************************************************************************/
-/*										 		end			 										*/
+/*										 		end													*/
 /****************************************************************************************************/
 
-
 /****************************************************************************************************/
-/*										Main simulation routine										*/
+/*									Struct for uniform int distribution                             */
 /****************************************************************************************************/
-int main(void) {
-	/* Initializing the seeder */
-	srand(time(0));
+struct random_stream_uniform_int
+{
+    /* Random number engine: Mersenne-Twister */
+    std::mt19937_64                     mt;
+    /* Random number generator: Uniform integer-distribution */
+    std::uniform_int_distribution<>     uniform_dist;
 
-	/* Initialize the populations */
-	Cortical_Column Cortex;
-	Thalamic_Column Thalamus;
+    /* Constructors */
+    random_stream_uniform_int(){}
+    random_stream_uniform_int(double lower_bound, double upper_bound)
+    : mt(rand()) , uniform_dist(lower_bound, upper_bound)
+    {}
 
-	/* Connect both modules */
-	Cortex.get_Thalamus(Thalamus);
-	Thalamus.get_Cortex(Cortex);
-
-	/* Take the time of the simulation */
-	time_t start,end;
-	time (&start);
-	/* Simulation */
-	for (int t=0; t< T*res; ++t) {
-		ODE (Cortex, Thalamus);
-	}
-
-	time (&end);
-	/* Time consumed by the simulation */
-	double dif = difftime(end,start);
-	std::cout << "simulation done!\n";
-	std::cout << "took " << dif 	<< " seconds" << "\n";
-	std::cout << "end\n";
-}
+    /* Overwrites the function-call operator "( )" */
+    double operator( )(void) {
+        return uniform_dist(mt);
+    }
+};
 /****************************************************************************************************/
 /*										 		end													*/
 /****************************************************************************************************/

@@ -34,23 +34,10 @@
 #pragma once
 #include <cmath>
 #include <vector>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include "Random_Stream.h"
 #include "Thalamic_Column.h"
 using std::vector;
-
 class Thalamic_Column;
-/****************************************************************************************************/
-/*										Typedefs for RNG											*/
-/****************************************************************************************************/
-typedef boost::mt11213b                    	ENG;    /* Mersenne Twister		*/
-typedef boost::normal_distribution<double>	DIST;   /* Normal Distribution	*/
-typedef boost::variate_generator<ENG,DIST> 	GEN;    /* Variate generator	*/
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
-
 
 /****************************************************************************************************/
 /*									Macro for vector initialization									*/
@@ -131,7 +118,7 @@ private:
 					x		= _INIT(0.0);		/* derivative of y									*/
 
 	/* Random number generators */
-	vector<GEN>		MTRands;
+    vector<random_stream_normal> MTRands;
 
 	/* Container for noise */
 	vector<double>	Rand_vars;

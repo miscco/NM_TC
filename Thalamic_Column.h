@@ -34,24 +34,10 @@
 #pragma once
 #include <cmath>
 #include <vector>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
+#include "Random_Stream.h"
 #include "Cortical_Column.h"
 using std::vector;
-
 class Cortical_Column;
-
-/****************************************************************************************************/
-/*										Typedefs for RNG											*/
-/****************************************************************************************************/
-typedef boost::mt11213b                    	ENG;    /* Mersenne Twister		*/
-typedef boost::normal_distribution<double>	DIST;   /* Normal Distribution	*/
-typedef boost::variate_generator<ENG,DIST> 	GEN;    /* Variate generator	*/
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
-
 
 /****************************************************************************************************/
 /*									Macro for vector initialization									*/
@@ -158,7 +144,7 @@ private:
 					m_h2	= _INIT(0.0);		/* activation 	of h   channel bound with protein 	*/
 
 	/* Random number generators */
-	vector<GEN>		MTRands;
+    vector<random_stream_normal> MTRands;
 
 	/* Container for noise */
 	vector<double>	Rand_vars;

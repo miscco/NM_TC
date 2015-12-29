@@ -44,8 +44,8 @@ void Thalamic_Column::set_RNG(void) {
 	/* Create RNG for each stream */
 	for (int i=0; i<N; ++i){
 		/* Add the RNG for I_{l} and I_{l,0}*/
-		MTRands.push_back({ENG(rand()), DIST (0.0, dphi*dt)});
-		MTRands.push_back({ENG(rand()), DIST (0.0, dt)});
+        MTRands.push_back(random_stream_normal(0.0, dphi*dt));
+        MTRands.push_back(random_stream_normal(0.0, dt));
 
 		/* Get the random number for the first iteration */
 		Rand_vars.push_back(MTRands[2*i]());
