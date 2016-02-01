@@ -38,7 +38,7 @@
 /****************************************************************************************************/
 /*										Evaluation of SRK4											*/
 /****************************************************************************************************/
-inline void ODE(Cortical_Column& Cortex, Thalamic_Column& Thalamus) {
+void ODE(Cortical_Column& Cortex, Thalamic_Column& Thalamus) {
 	/* First calculate every ith RK moment. Has to be in order, 1th moment first */
 	for (int i=0; i<4; ++i) {
 		Cortex.set_RK(i);

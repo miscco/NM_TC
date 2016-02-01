@@ -60,8 +60,8 @@ public:
 	{set_RNG();}
 
 	Cortical_Column(double* Param, double* Con)
-	 :sigma_e 	(Param[0]),	g_KNa	(Param[1]), 	  dphi	(Param[2]),
-	  N_te		(Con[2]),	N_ti	(Con[3])
+	 :sigma_p 	(Param[0]),	g_KNa	(Param[1]), 	  dphi	(Param[2]),
+	  N_tp		(Con[2]),	N_ti	(Con[3])
 	{set_RNG();}
 
 	/* Connect to the thalamic module */
@@ -79,20 +79,21 @@ public:
 	friend class Thalamic_Column;
 
 private:
+	/* Declaration of private functions */
 	/* Initialize the RNGs */
 	void 	set_RNG		(void);
 
 	/* Firing rates */
-	double 	get_Qe		(int) const;
+	double 	get_Qp		(int) const;
 	double 	get_Qi		(int) const;
 
 	/* Currents */
-	double 	I_ee		(int) const;
+	double 	I_ep		(int) const;
 	double 	I_ei		(int) const;
-	double 	I_ie		(int) const;
-	double 	I_ii		(int) const;
-	double 	I_L_e		(int) const;
-	double 	I_L_i		(int) const;
+	double 	I_gp		(int) const;
+	double 	I_gi		(int) const;
+	double 	I_L_p		(int) const;
+	double 	I_L_g		(int) const;
 	double 	I_KNa		(int) const;
 
 	/* Potassium pump */
@@ -102,46 +103,25 @@ private:
 	double 	noise_xRK 	(int,int) const;
 	double 	noise_aRK 	(int) const;
 
-	/* Population variables */
-	vector<double> 	Ve		= _INIT(E_L_e),		/* excitatory membrane voltage						*/
-					Vi		= _INIT(E_L_i),		/* inhibitory membrane voltage						*/
-					Na		= _INIT(Na_eq),		/* Na concentration									*/
-					y_ee	= _INIT(0.0),		/* PostSP from excitatory to excitatory population	*/
-					y_ei	= _INIT(0.0),		/* PostSP from excitatory to inhibitory population	*/
-					y_ie	= _INIT(0.0),		/* PostSP from inhibitory to excitatory population	*/
-					y_ii	= _INIT(0.0),		/* PostSP from inhibitory to inhibitory population	*/
-					y		= _INIT(0.0),		/* axonal flux										*/
-					x_ee	= _INIT(0.0),		/* derivative of y_ee								*/
-					x_ei	= _INIT(0.0),		/* derivative of y_ei								*/
-					x_ie	= _INIT(0.0),		/* derivative of y_ie				 				*/
-					x_ii	= _INIT(0.0),		/* derivative of y_ii								*/
-					x		= _INIT(0.0);		/* derivative of y									*/
-
-	/* Random number generators */
-    vector<random_stream_normal> MTRands;
-
-	/* Container for noise */
-	vector<double>	Rand_vars;
-
 	/* Declaration and Initialization of parameters */
 	/* Membrane time in ms */
-	const double 	tau_e 		= 30;
+	const double 	tau_p 		= 30;
 	const double 	tau_i 		= 30;
 
 	/* Maximum firing rate in ms^-1 */
-	const double 	Qe_max		= 30.E-3;
+	const double 	Qp_max		= 30.E-3;
 	const double 	Qi_max		= 60.E-3;
 
 	/* Sigmoid threshold in mV */
-	const double 	theta_e		= -58.5;
+	const double 	theta_p		= -58.5;
 	const double 	theta_i		= -58.5;
 
 	/* Sigmoid gain in mV */
-	const double 	sigma_e		= 4;
+	const double 	sigma_p		= 4;
 	const double 	sigma_i		= 6;
 
 	/* Scaling parameter for sigmoidal mapping (dimensionless) */
-	const double 	C1          = (3.14159265/sqrt(3));
+	const double 	C1          = (M_PI/sqrt(3));
 
 	/* parameters of the firing adaption */
 	const double 	alpha_Na	= 2;			/* Sodium influx per spike			in mM ms 	*/
@@ -152,16 +132,20 @@ private:
 
 	/* PSP rise time in ms^-1 */
 	const double 	gamma_e		= 70E-3;
-	const double 	gamma_i		= 58.6E-3;
+	const double 	gamma_g		= 58.6E-3;
 
 	/* Axonal flux time constant */
 	const double 	nu			= 120E-3;
 
-	/* Conductivities in mS/cm^-2 */
-	/* Leak */
-	const double 	g_L    		= 1;
+	/* Conductivities */
+	/* Leak  in aU*/
+	const double 	g_L    		= 1.;
 
-	/* KNa */
+	/* Synaptic conductivities in ms */
+	const double 	g_AMPA 		= 1.;
+	const double 	g_GABA 		= 1.;
+
+	/* KNa in mS/cm^2 */
 	const double	g_KNa		= 1.33;
 
 	/* Reversal potentials in mV */
@@ -170,8 +154,8 @@ private:
 	const double 	E_GABA  	= -70;
 
 	/* Leak */
-	const double 	E_L_e 		= -64;
-	const double 	E_L_i 		= -64;
+	const double 	E_L_p 		= -64;
+	const double 	E_L_g 		= -64;
 
 	/* Potassium */
 	const double 	E_K    		= -100;
@@ -182,19 +166,40 @@ private:
 	double			input		= 0.0;
 
 	/* Connectivities (dimensionless) */
-	const double 	N_ee		= 115;
+	const double 	N_ep		= 115;
 	const double 	N_ei		= 72;
-	const double 	N_ie		= 90;
+	const double 	N_ip		= 90;
 	const double 	N_ii		= 90;
-	const double 	N_te		= 2.5;
+	const double 	N_tp		= 2.5;
 	const double 	N_ti		= 2.5;
 
 	/* Pointer to thalamic column */
 	Thalamic_Column* Thalamus;
 
-	/* Interation matrix for SRK4 */
-	const vector<double> A = {0.5, 0.5, 1.0, 1.0};
+	/* Parameters for SRK4 iteration */
+	const vector<double> A = {0.5,  0.5,  1.0, 1.0};
 	const vector<double> B = {0.75, 0.75, 0.0, 0.0};
+
+	/* Random number generators */
+	vector<random_stream_normal> MTRands;
+
+	/* Container for noise */
+	vector<double>	Rand_vars;
+
+	/* Population variables																			*/
+	vector<double> 	Vp		= _INIT(E_L_p),		/* excitatory membrane voltage						*/
+					Vi		= _INIT(E_L_g),		/* inhibitory membrane voltage						*/
+					Na		= _INIT(Na_eq),		/* Na concentration									*/
+					s_ep	= _INIT(0.0),		/* PostSP from excitatory to excitatory population	*/
+					s_ei	= _INIT(0.0),		/* PostSP from excitatory to inhibitory population	*/
+					s_gp	= _INIT(0.0),		/* PostSP from inhibitory to excitatory population	*/
+					s_gi	= _INIT(0.0),		/* PostSP from inhibitory to inhibitory population	*/
+					y		= _INIT(0.0),		/* axonal flux										*/
+					x_ep	= _INIT(0.0),		/* derivative of s_ep								*/
+					x_ei	= _INIT(0.0),		/* derivative of s_ei								*/
+					x_gp	= _INIT(0.0),		/* derivative of s_gp				 				*/
+					x_gi	= _INIT(0.0),		/* derivative of s_gi								*/
+					x		= _INIT(0.0);		/* derivative of y									*/
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

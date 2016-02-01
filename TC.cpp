@@ -30,9 +30,12 @@
 
 /****************************************************************************************************/
 /*		Main file for compilation tests																*/
+/*		The Simulation requires the following boost libraries:	Random								*/
 /****************************************************************************************************/
 #include <iostream>
 #include <ctime>
+#include "Cortical_Column.h"
+#include "Thalamic_Column.h"
 #include "ODE.h"
 
 

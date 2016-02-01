@@ -62,7 +62,7 @@ public:
 	/* Constructor for simulation */
 	Thalamic_Column(double* Param, double* Con)
 	: g_LK	(Param[1]),	g_h (Param[0]),
-	  N_et 		(Con[0]),	N_er	(Con[1])
+	  N_pt 		(Con[0]),	N_pr	(Con[1])
 	{set_RNG();}
 
 	/* Get the pointer to the cortical module */
@@ -80,6 +80,7 @@ public:
 	void	set_input	(double I) {input = I;}
 
 private:
+	/* Declaration of private functions */
 	/* Initialize the RNGs */
 	void 	set_RNG		(void);
 
@@ -89,9 +90,9 @@ private:
 
 	/* Synaptic currents */
 	double 	I_et		(int) const;
-	double 	I_it		(int) const;
+	double 	I_gt		(int) const;
 	double 	I_er		(int) const;
-	double 	I_ir		(int) const;
+	double 	I_gr		(int) const;
 
 	/* Activation functions */
 	double  m_inf_T_t	(int) const;
@@ -124,31 +125,6 @@ private:
 	double 	noise_xRK 	(int,int) const;
 	double 	noise_aRK 	(int) const;
 
-	/* Population variables */
-	vector<double> 	Vt		= _INIT(E_L_t),		/* TC membrane voltage								*/
-					Vr		= _INIT(E_L_r),		/* RE membrane voltage								*/
-					Ca		= _INIT(Ca_0),		/* Calcium concentration of TC population			*/
-					y_tt	= _INIT(0.0),		/* PostSP from TC population to TC population		*/
-					y_tr	= _INIT(0.0),		/* PostSP from TC population to RE population		*/
-					y_rt	= _INIT(0.0),		/* PostSP from RE population to TC population		*/
-					y_rr	= _INIT(0.0),		/* PostSP from RE population to RE population		*/
-					y		= _INIT(0.0),		/* axonal flux										*/
-					x_tt	= _INIT(0.0),		/* derivative of y_tt								*/
-					x_tr	= _INIT(0.0),		/* derivative of y_tr								*/
-					x_rt	= _INIT(0.0),		/* derivative of y_rt								*/
-					x_rr	= _INIT(0.0),		/* derivative of y_rr								*/
-					x		= _INIT(0.0),		/* derivative of y									*/
-					h_T_t	= _INIT(0.0),		/* inactivation of T channel						*/
-					h_T_r	= _INIT(0.0),		/* inactivation of T channel						*/
-					m_h		= _INIT(0.0),		/* activation 	of h   channel						*/
-					m_h2	= _INIT(0.0);		/* activation 	of h   channel bound with protein 	*/
-
-	/* Random number generators */
-    vector<random_stream_normal> MTRands;
-
-	/* Container for noise */
-	vector<double>	Rand_vars;
-
 	/* Declaration and Initialization of parameters */
 	/* Membrane time in ms */
 	const double 	tau_t 		= 20;
@@ -167,27 +143,31 @@ private:
 	const double 	sigma_r		= 6;
 
 	/* Scaling parameter for sigmoidal mapping (dimensionless) */
-	const double 	C1          = (3.14159265/sqrt(3));
+	const double 	C1          = (M_PI/sqrt(3));
 
 	/* PSP rise time in ms^-1 */
 	const double 	gamma_e		= 70E-3;
-	const double 	gamma_i		= 100E-3;
+	const double 	gamma_g		= 100E-3;
 
 	/* axonal flux time constant */
 	const double 	nu			= 120E-3;
 
-	/* Conductivities in mS/cm^-2 */
-	/* Leak current */
-	const double 	g_L  		= 1;
+	/* Conductivities */
+	/* Leak  in aU */
+	const double 	g_L    		= 1.;
 
-	/* Potassium leak current */
+	/* Synaptic conductivity in ms */
+	const double 	g_AMPA 		= 1.;
+	const double 	g_GABA 		= 1.;
+
+	/* Potassium leak current in mS/m^2 */
 	const double 	g_LK 		= 0.02;
 
-	/* T current */
+	/* T current in mS/m^2 */
 	const double	g_T_t		= 3;
 	const double	g_T_r		= 2.3;
 
-	/* h current */
+	/* h current in mS/m^2 */
 	const double	g_h			= 0.051;
 
 	/* Reversal potentials in mV */
@@ -230,15 +210,42 @@ private:
 	const double 	N_tr		= 3;
 	const double 	N_rt		= 5;
 	const double 	N_rr		= 19;
-	const double 	N_et		= 2.6;
-	const double 	N_er		= 2.6;
+
+	/* Connectivities from cortex (dimensionless) */
+	const double 	N_pt		= 2.6;
+	const double 	N_pr		= 2.6;
 
 	/* Pointer to cortical column */
 	Cortical_Column* Cortex;
 
-	/* SRK integration parameters */
-	const vector<double> A = {0.5, 0.5, 1.0, 1.0};
+	/* Parameters for SRK4 iteration */
+	const vector<double> A = {0.5,  0.5,  1.0, 1.0};
 	const vector<double> B = {0.75, 0.75, 0.0, 0.0};
+
+	/* Random number generators */
+	vector<random_stream_normal> MTRands;
+
+	/* Container for noise */
+	vector<double>	Rand_vars;
+
+	/* Population variables																			*/
+	vector<double> 	Vt		= _INIT(E_L_t),		/* TC membrane voltage								*/
+					Vr		= _INIT(E_L_r),		/* RE membrane voltage								*/
+					Ca		= _INIT(Ca_0),		/* Calcium concentration of TC population			*/
+					y_et	= _INIT(0.0),		/* PostSP from TC population to TC population		*/
+					y_er	= _INIT(0.0),		/* PostSP from TC population to RE population		*/
+					y_rt	= _INIT(0.0),		/* PostSP from RE population to TC population		*/
+					y_rr	= _INIT(0.0),		/* PostSP from RE population to RE population		*/
+					y		= _INIT(0.0),		/* axonal flux										*/
+					x_et	= _INIT(0.0),		/* derivative of y_et								*/
+					x_er	= _INIT(0.0),		/* derivative of y_er								*/
+					x_rt	= _INIT(0.0),		/* derivative of y_rt								*/
+					x_rr	= _INIT(0.0),		/* derivative of y_rr								*/
+					x		= _INIT(0.0),		/* derivative of y									*/
+					h_T_t	= _INIT(0.0),		/* inactivation of T channel						*/
+					h_T_r	= _INIT(0.0),		/* inactivation of T channel						*/
+					m_h		= _INIT(0.0),		/* activation 	of h   channel						*/
+					m_h2	= _INIT(0.0);		/* activation 	of h   channel bound with protein 	*/
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

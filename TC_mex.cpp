@@ -32,6 +32,7 @@
 /* 	Implementation of the simulation as MATLAB routine (mex compiler)								*/
 /* 	mex command is given by:																		*/
 /* 	mex CXXFLAGS="\$CXXFLAGS -std=c++11" TC_mex.cpp Cortical_Column.cpp Thalamic_Column.cpp			*/
+/*	The Simulation requires the following boost libraries:	Random									*/
 /****************************************************************************************************/
 #include <ctime>
 #include "mex.h"

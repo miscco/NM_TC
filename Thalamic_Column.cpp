@@ -43,9 +43,11 @@ void Thalamic_Column::set_RNG(void) {
 
 	/* Create RNG for each stream */
 	for (int i=0; i<N; ++i){
-		/* Add the RNG for I_{l} and I_{l,0}*/
-        MTRands.push_back(random_stream_normal(0.0, dphi*dt));
-        MTRands.push_back(random_stream_normal(0.0, dt));
+		/* Add the RNG for I_{l}*/
+		MTRands.push_back(random_stream_normal(0.0, dphi*dt));
+
+		/* Add the RNG for I_{l,0} */
+		MTRands.push_back(random_stream_normal(0.0, dt));
 
 		/* Get the random number for the first iteration */
 		Rand_vars.push_back(MTRands[2*i]());
@@ -62,14 +64,14 @@ void Thalamic_Column::set_RNG(void) {
 /****************************************************************************************************/
 /* Thalamic relay (TC) firing rate */
 double Thalamic_Column::get_Qt	(int N) const{
-	double q = Qt_max/ (1 + exp(-C1 * (Vt[N] - theta_t) / sigma_t));
-	return q;
+	double Q = Qt_max/ (1 + exp(-C1 * (Vt[N] - theta_t) / sigma_t));
+	return Q;
 }
 
 /* Thalamic reticular (RE) firing rate */
 double Thalamic_Column::get_Qr	(int N) const{
-	double q = Qr_max / (1 + exp(-C1 * (Vr[N]- theta_r) / sigma_r));
-	return q;
+	double Q = Qr_max / (1 + exp(-C1 * (Vr[N]- theta_r) / sigma_r));
+	return Q;
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -81,25 +83,25 @@ double Thalamic_Column::get_Qr	(int N) const{
 /****************************************************************************************************/
 /* Excitatory input to TC population */
 double Thalamic_Column::I_et	(int N) const{
-	double psi = y_tt[N]* (Vt[N]- E_AMPA);
-	return psi;
+	double I = g_AMPA * y_et[N]* (Vt[N]- E_AMPA);
+	return I;
 }
 
 /* Inhibitory input to TC population */
-double Thalamic_Column::I_it	(int N) const{
-	double psi = y_rt[N]* (Vt[N]- E_GABA);
-	return psi;
+double Thalamic_Column::I_gt	(int N) const{
+	double I = g_AMPA * y_rt[N]* (Vt[N]- E_GABA);
+	return I;
 }
 /* Excitatory input to RE population */
 double Thalamic_Column::I_er	(int N) const{
-	double psi = y_tr[N]* (Vr[N]- E_AMPA);
-	return psi;
+	double I = g_GABA * y_er[N]* (Vr[N]- E_AMPA);
+	return I;
 }
 
 /* Inhibitory input to RE population */
-double Thalamic_Column::I_ir	(int N) const{
-	double psi = y_rr[N]* (Vr[N]- E_GABA);
-	return psi;
+double Thalamic_Column::I_gr	(int N) const{
+	double I = g_GABA * y_rr[N]* (Vr[N]- E_GABA);
+	return I;
 }
 /****************************************************************************************************/
 /*										 		end			 										*/
@@ -250,18 +252,18 @@ double Thalamic_Column::noise_aRK(int M) const{
 /****************************************************************************************************/
 void Thalamic_Column::set_RK (int N) {
 	extern const double dt;
-	Vt	  	[N+1] = Vt   [0] + A[N]*dt*(-(I_L_t(N) + I_et(N) + I_it(N))/tau_t - (I_LK_t(N) + I_T_t(N) + I_h(N)));
-	Vr	  	[N+1] = Vr   [0] + A[N]*dt*(-(I_L_r(N) + I_er(N) + I_ir(N))/tau_r - (I_LK_r(N) + I_T_r(N)));
+	Vt	  	[N+1] = Vt   [0] + A[N]*dt*(-(I_L_t(N) + I_et(N) + I_gt(N))/tau_t - (I_LK_t(N) + I_T_t(N) + I_h(N)));
+	Vr	  	[N+1] = Vr   [0] + A[N]*dt*(-(I_L_r(N) + I_er(N) + I_gr(N))/tau_r - (I_LK_r(N) + I_T_r(N)));
 	Ca      [N+1] = Ca   [0] + A[N]*dt*(alpha_Ca * I_T_t(N) - (Ca[N] - Ca_0)/tau_Ca);
-	y_tt	[N+1] = y_tt [0] + A[N]*dt*(x_tt[N]);
-	y_tr	[N+1] = y_tr [0] + A[N]*dt*(x_tr[N]);
+	y_et	[N+1] = y_et [0] + A[N]*dt*(x_et[N]);
+	y_er	[N+1] = y_er [0] + A[N]*dt*(x_er[N]);
 	y_rt	[N+1] = y_rt [0] + A[N]*dt*(x_rt[N]);
 	y_rr	[N+1] = y_rr [0] + A[N]*dt*(x_rr[N]);
 	y		[N+1] = y	 [0] + A[N]*dt*(x	[N]);
-	x_tt  	[N+1] = x_tt [0] + A[N]*dt*(pow(gamma_e, 2) * (                 + N_et * Cortex->y[N] - y_tt[N]) - 2 * gamma_e * x_tt[N]) + noise_xRK(N,0);
-	x_tr  	[N+1] = x_tr [0] + A[N]*dt*(pow(gamma_e, 2) * (N_tr * get_Qt(N)	+ N_er * Cortex->y[N] - y_tr[N]) - 2 * gamma_e * x_tr[N]);
-	x_rt  	[N+1] = x_rt [0] + A[N]*dt*(pow(gamma_i, 2) * (N_rt * get_Qr(N)						  - y_rt[N]) - 2 * gamma_i * x_rt[N]);
-	x_rr  	[N+1] = x_rr [0] + A[N]*dt*(pow(gamma_i, 2) * (N_rr * get_Qr(N)						  - y_rr[N]) - 2 * gamma_i * x_rr[N]);
+	x_et  	[N+1] = x_et [0] + A[N]*dt*(pow(gamma_e, 2) * (                 + N_pt * Cortex->y[N] - y_et[N]) - 2 * gamma_e * x_et[N]) + noise_xRK(N,0);
+	x_er  	[N+1] = x_er [0] + A[N]*dt*(pow(gamma_e, 2) * (N_tr * get_Qt(N)	+ N_pr * Cortex->y[N] - y_er[N]) - 2 * gamma_e * x_er[N]);
+	x_rt  	[N+1] = x_rt [0] + A[N]*dt*(pow(gamma_g, 2) * (N_rt * get_Qr(N)						  - y_rt[N]) - 2 * gamma_g * x_rt[N]);
+	x_rr  	[N+1] = x_rr [0] + A[N]*dt*(pow(gamma_g, 2) * (N_rr * get_Qr(N)						  - y_rr[N]) - 2 * gamma_g * x_rr[N]);
 	x	  	[N+1] = x	 [0] + A[N]*dt*(pow(nu,		 2) * (		  get_Qt(N)						  - y   [N]) - 2 * nu	   * x   [N]);
 	h_T_t   [N+1] = h_T_t[0] + A[N]*dt*(h_inf_T_t(N) - h_T_t[N])/tau_h_T_t(N);
 	h_T_r 	[N+1] = h_T_r[0] + A[N]*dt*(h_inf_T_r(N) - h_T_r[N])/tau_h_T_r(N);
@@ -280,13 +282,13 @@ void Thalamic_Column::add_RK(void) {
 	Vt	  	[0] =(-3*Vt   [0] + 2*Vt   [1] + 4*Vt	[2] + 2* Vt     [3] + Vt	[4])/6;
 	Vr	  	[0] =(-3*Vr   [0] + 2*Vr   [1] + 4*Vr	[2] + 2* Vr     [3] + Vr	[4])/6;
 	Ca	  	[0] =(-3*Ca   [0] + 2*Ca   [1] + 4*Ca	[2] + 2* Ca     [3] + Ca	[4])/6;
-	y_tt	[0] =(-3*y_tt [0] + 2*y_tt [1] + 4*y_tt	[2] + 2* y_tt	[3] + y_tt	[4])/6;
-	y_tr	[0] =(-3*y_tr [0] + 2*y_tr [1] + 4*y_tr	[2] + 2* y_tr	[3] + y_tr	[4])/6;
+	y_et	[0] =(-3*y_et [0] + 2*y_et [1] + 4*y_et	[2] + 2* y_et	[3] + y_et	[4])/6;
+	y_er	[0] =(-3*y_er [0] + 2*y_er [1] + 4*y_er	[2] + 2* y_er	[3] + y_er	[4])/6;
 	y_rt	[0] =(-3*y_rt [0] + 2*y_rt [1] + 4*y_rt	[2] + 2* y_rt	[3] + y_rt	[4])/6;
 	y_rr	[0] =(-3*y_rr [0] + 2*y_rr [1] + 4*y_rr	[2] + 2* y_rr	[3] + y_rr	[4])/6;
 	y	  	[0] =(-3*y	  [0] + 2*y	   [1] + 4*y	[2] + 2* y		[3] + y		[4])/6;
-	x_tt  	[0] =(-3*x_tt [0] + 2*x_tt [1] + 4*x_tt	[2] + 2* x_tt	[3] + x_tt	[4])/6 + noise_aRK(0);
-	x_tr  	[0] =(-3*x_tr [0] + 2*x_tr [1] + 4*x_tr	[2] + 2* x_tr	[3] + x_tr	[4])/6;
+	x_et  	[0] =(-3*x_et [0] + 2*x_et [1] + 4*x_et	[2] + 2* x_et	[3] + x_et	[4])/6 + noise_aRK(0);
+	x_er  	[0] =(-3*x_er [0] + 2*x_er [1] + 4*x_er	[2] + 2* x_er	[3] + x_er	[4])/6;
 	x_rt  	[0] =(-3*x_rt [0] + 2*x_rt [1] + 4*x_rt	[2] + 2* x_rt	[3] + x_rt	[4])/6;
 	x_rr  	[0] =(-3*x_rr [0] + 2*x_rr [1] + 4*x_rr	[2] + 2* x_rr	[3] + x_rr	[4])/6;
 	x	  	[0] =(-3*x	  [0] + 2*x	   [1] + 4*x	[2] + 2* x		[3] + x		[4])/6;

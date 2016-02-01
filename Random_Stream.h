@@ -21,7 +21,6 @@
  *
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
  *              Stefanie Gareis: gareis@inb.uni-luebeck.de
- *
  */
 
 /****************************************************************************************************/

@@ -38,7 +38,7 @@
 /****************************************************************************************************/
 /*											Save data												*/
 /****************************************************************************************************/
-inline void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, vector<double*> Data) {
+void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, vector<double*> Data) {
 	Data[0][counter] = Cortex.Ve		[0];
 	Data[1][counter] = Thalamus.Vt		[0];
 	Data[2][counter] = Thalamus.Ca		[0];
