@@ -25,17 +25,14 @@
  *				to auditory stimulation.
  *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
  *				JC Claussen.
- *				PLoS Computational Biology In Review (in review).
+ *				PLoS Computational Biology (in review).
  */
 
 /****************************************************************************************************/
-/*		Main file for compilation tests																*/
-/*		The Simulation requires the following boost libraries:	Random								*/
+/*									Main file for compilation tests									*/
 /****************************************************************************************************/
 #include <iostream>
 #include <ctime>
-#include "Cortical_Column.h"
-#include "Thalamic_Column.h"
 #include "ODE.h"
 
 

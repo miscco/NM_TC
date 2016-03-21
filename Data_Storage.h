@@ -25,7 +25,7 @@
  *				to auditory stimulation.
  *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
  *				JC Claussen.
- *				PLoS Computational Biology In Review (in review).
+ *				PLoS Computational Biology (in review).
  */
 
 /****************************************************************************************************/

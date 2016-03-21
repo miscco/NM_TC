@@ -25,7 +25,7 @@
  *				to auditory stimulation.
  *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
  *				JC Claussen.
- *				PLoS Computational Biology In Review (in review).
+ *				PLoS Computational Biology (in review).
  */
 
 /****************************************************************************************************/
@@ -145,7 +145,7 @@ private:
 	std::vector<int>		marker_stimulation;
 
 	/* Random number generator in case of semi-periodic stimulation */
- 	random_stream_uniform_int		Uniform_Distribution;
+	random_stream_uniform_int		Uniform_Distribution;
 };
 /****************************************************************************************************/
 /*										 		end													*/

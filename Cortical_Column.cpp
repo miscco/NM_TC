@@ -1,5 +1,5 @@
 /*
- *	Copyright (c) 2015 UniVprsity of Lübeck
+ *	Copyright (c) 2015 University of Lübeck
  *
  *	Permission is hereby granted, free of charge, to any person obtaining a copy
  *	of this software and associated documentation files (the "Software"), to deal
@@ -21,11 +21,15 @@
  *
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
  *
- *	Based on:	A thalamocortical neural mass model of the EEG during NREM sleep and its response
+ *	Based on:	Characterization of K-Complexes and Slow Wave Activity in a Neural Mass Model
+ *				A Weigenand, M Schellenberger Costa, H-VV Ngo, JC Claussen, T Martinetz
+ *				PLoS Computational Biology. 2014;10:e1003923
+ *
+ *				A thalamocortical neural mass model of the EEG during NREM sleep and its response
  *				to auditory stimulation.
  *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
  *				JC Claussen.
- *				PLoS Computational Biology In Review (in review).
+ *				PLoS Computational Biology (in review).
  */
 
 /****************************************************************************************************/

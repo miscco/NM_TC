@@ -21,11 +21,15 @@
  *
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
  *
- *	Based on:	A thalamocortical neural mass model of the EEG during NREM sleep and its response
+ *	Based on:	Characterization of K-Complexes and Slow Wave Activity in a Neural Mass Model
+ *				A Weigenand, M Schellenberger Costa, H-VV Ngo, JC Claussen, T Martinetz
+ *				PLoS Computational Biology. 2014;10:e1003923
+ *
+ *				A thalamocortical neural mass model of the EEG during NREM sleep and its response
  *				to auditory stimulation.
  *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
  *				JC Claussen.
- *				PLoS Computational Biology In Review (in review).
+ *				PLoS Computational Biology (in review).
  */
 
 /************************************************************************************************/
@@ -137,14 +141,14 @@ private:
 	/* Axonal flux time constant */
 	const double 	nu			= 120E-3;
 
-	/* Conductivities */
-	/* Leak  in aU*/
+	/* Leak weight in aU*/
 	const double 	g_L    		= 1.;
 
-	/* Synaptic conductivities in ms */
+	/* Synaptic weight in ms */
 	const double 	g_AMPA 		= 1.;
 	const double 	g_GABA 		= 1.;
 
+	/* Conductivity */
 	/* KNa in mS/cm^2 */
 	const double	g_KNa		= 1.33;
 

@@ -32,7 +32,6 @@
 /* 	Implementation of the simulation as MATLAB routine (mex compiler)								*/
 /* 	mex command is given by:																		*/
 /* 	mex CXXFLAGS="\$CXXFLAGS -std=c++11" TC_mex.cpp Cortical_Column.cpp Thalamic_Column.cpp			*/
-/*	The Simulation requires the following boost libraries:	Random									*/
 /****************************************************************************************************/
 #include <ctime>
 #include "mex.h"
@@ -124,7 +123,7 @@ mxArray* GetMexArray(int N, int M) {
 	mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
 	mxSetM(Array, N);
 	mxSetN(Array, M);
-	#pragma omp critical
+#pragma omp critical
 	{mxSetData(Array, mxMalloc(sizeof(double)*M*N));}
 	return Array;
 }

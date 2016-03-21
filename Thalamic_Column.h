@@ -25,7 +25,7 @@
  *				to auditory stimulation.
  *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
  *				JC Claussen.
- *				PLoS Computational Biology In Review (in review).
+ *				PLoS Computational Biology (in review).
  */
 
 /************************************************************************************************/
@@ -76,7 +76,7 @@ public:
 	friend void get_data (int, Cortical_Column&, Thalamic_Column&, vector<double*>);
 	friend class Cortical_Column;
 
-	/* Set strength of input */
+	/* Set strength of external input */
 	void	set_input	(double I) {input = I;}
 
 private:
@@ -149,17 +149,17 @@ private:
 	const double 	gamma_e		= 70E-3;
 	const double 	gamma_g		= 100E-3;
 
-	/* axonal flux time constant */
+	/* Axonal flux time constant in ms^-1*/
 	const double 	nu			= 120E-3;
 
-	/* Conductivities */
-	/* Leak  in aU */
+	/* Leak weight in aU */
 	const double 	g_L    		= 1.;
 
-	/* Synaptic conductivity in ms */
+	/* Synaptic weights in ms */
 	const double 	g_AMPA 		= 1.;
 	const double 	g_GABA 		= 1.;
 
+	/* Conductivities */
 	/* Potassium leak current in mS/m^2 */
 	const double 	g_LK 		= 0.02;
 
@@ -168,7 +168,7 @@ private:
 	const double	g_T_r		= 2.3;
 
 	/* h current in mS/m^2 */
-	const double	g_h			= 0.051;
+	const double	g_h			= 0.06;
 
 	/* Reversal potentials in mV */
 	/* Synaptic */
@@ -232,15 +232,15 @@ private:
 	vector<double> 	Vt		= _INIT(E_L_t),		/* TC membrane voltage								*/
 					Vr		= _INIT(E_L_r),		/* RE membrane voltage								*/
 					Ca		= _INIT(Ca_0),		/* Calcium concentration of TC population			*/
-					y_et	= _INIT(0.0),		/* PostSP from TC population to TC population		*/
-					y_er	= _INIT(0.0),		/* PostSP from TC population to RE population		*/
-					y_rt	= _INIT(0.0),		/* PostSP from RE population to TC population		*/
-					y_rr	= _INIT(0.0),		/* PostSP from RE population to RE population		*/
+					s_et	= _INIT(0.0),		/* PostSP from TC population to TC population		*/
+					s_er	= _INIT(0.0),		/* PostSP from TC population to RE population		*/
+					s_rt	= _INIT(0.0),		/* PostSP from RE population to TC population		*/
+					s_rr	= _INIT(0.0),		/* PostSP from RE population to RE population		*/
 					y		= _INIT(0.0),		/* axonal flux										*/
-					x_et	= _INIT(0.0),		/* derivative of y_et								*/
-					x_er	= _INIT(0.0),		/* derivative of y_er								*/
-					x_rt	= _INIT(0.0),		/* derivative of y_rt								*/
-					x_rr	= _INIT(0.0),		/* derivative of y_rr								*/
+					x_et	= _INIT(0.0),		/* derivative of s_et								*/
+					x_er	= _INIT(0.0),		/* derivative of s_er								*/
+					x_rt	= _INIT(0.0),		/* derivative of s_rt								*/
+					x_rr	= _INIT(0.0),		/* derivative of s_rr								*/
 					x		= _INIT(0.0),		/* derivative of y									*/
 					h_T_t	= _INIT(0.0),		/* inactivation of T channel						*/
 					h_T_r	= _INIT(0.0),		/* inactivation of T channel						*/
