@@ -39,7 +39,7 @@
 /*											Save data												*/
 /****************************************************************************************************/
 void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, vector<double*> Data) {
-	Data[0][counter] = Cortex.Ve		[0];
+	Data[0][counter] = Cortex.Vp		[0];
 	Data[1][counter] = Thalamus.Vt		[0];
 	Data[2][counter] = Thalamus.Ca		[0];
 	Data[3][counter] = Thalamus.act_h	();

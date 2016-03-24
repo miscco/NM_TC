@@ -64,8 +64,8 @@ public:
 	{set_RNG();}
 
 	Cortical_Column(double* Param, double* Con)
-	 :sigma_p 	(Param[0]),	g_KNa	(Param[1]), 	  dphi	(Param[2]),
-	  N_tp		(Con[2]),	N_ti	(Con[3])
+		:sigma_p 	(Param[0]),	g_KNa	(Param[1]), 	  dphi	(Param[2]),
+		  N_pt		(Con[2]),	N_it	(Con[3])
 	{set_RNG();}
 
 	/* Connect to the thalamic module */
@@ -170,12 +170,12 @@ private:
 	double			input		= 0.0;
 
 	/* Connectivities (dimensionless) */
-	const double 	N_ep		= 115;
-	const double 	N_ei		= 72;
-	const double 	N_ip		= 90;
+	const double 	N_pp		= 115;
+	const double 	N_ip		= 72;
+	const double 	N_pi		= 90;
 	const double 	N_ii		= 90;
-	const double 	N_tp		= 2.5;
-	const double 	N_ti		= 2.5;
+	const double 	N_pt		= 2.5;
+	const double 	N_it		= 2.5;
 
 	/* Pointer to thalamic column */
 	Thalamic_Column* Thalamus;
@@ -192,18 +192,18 @@ private:
 
 	/* Population variables																			*/
 	vector<double> 	Vp		= _INIT(E_L_p),		/* excitatory membrane voltage						*/
-					Vi		= _INIT(E_L_g),		/* inhibitory membrane voltage						*/
-					Na		= _INIT(Na_eq),		/* Na concentration									*/
-					s_ep	= _INIT(0.0),		/* PostSP from excitatory to excitatory population	*/
-					s_ei	= _INIT(0.0),		/* PostSP from excitatory to inhibitory population	*/
-					s_gp	= _INIT(0.0),		/* PostSP from inhibitory to excitatory population	*/
-					s_gi	= _INIT(0.0),		/* PostSP from inhibitory to inhibitory population	*/
-					y		= _INIT(0.0),		/* axonal flux										*/
-					x_ep	= _INIT(0.0),		/* derivative of s_ep								*/
-					x_ei	= _INIT(0.0),		/* derivative of s_ei								*/
-					x_gp	= _INIT(0.0),		/* derivative of s_gp				 				*/
-					x_gi	= _INIT(0.0),		/* derivative of s_gi								*/
-					x		= _INIT(0.0);		/* derivative of y									*/
+	Vi		= _INIT(E_L_g),		/* inhibitory membrane voltage						*/
+	Na		= _INIT(Na_eq),		/* Na concentration									*/
+	s_ep	= _INIT(0.0),		/* PostSP from excitatory to excitatory population	*/
+	s_ei	= _INIT(0.0),		/* PostSP from excitatory to inhibitory population	*/
+	s_gp	= _INIT(0.0),		/* PostSP from inhibitory to excitatory population	*/
+	s_gi	= _INIT(0.0),		/* PostSP from inhibitory to inhibitory population	*/
+	y		= _INIT(0.0),		/* axonal flux										*/
+	x_ep	= _INIT(0.0),		/* derivative of s_ep								*/
+	x_ei	= _INIT(0.0),		/* derivative of s_ei								*/
+	x_gp	= _INIT(0.0),		/* derivative of s_gp				 				*/
+	x_gi	= _INIT(0.0),		/* derivative of s_gi								*/
+	x		= _INIT(0.0);		/* derivative of y									*/
 };
 /****************************************************************************************************/
 /*										 		end			 										*/

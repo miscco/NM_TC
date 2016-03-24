@@ -9,25 +9,25 @@ end
 %mex CXXFLAGS="\$CXXFLAGS -std=c++11 -O3" TC_mex.cpp Cortical_Column.cpp Thalamic_Column.cpp
 
 if type == 1    
-    Param_Cortex        = [4.7;         % sigma_e
+    Param_Cortex        = [4.7;         % sigma_p
                            1.33;        % g_KNa
-                           20E-1];      % dphi
+                           2.];         % dphi
                        
-    Param_Thalamus      = [0.048;       % g_h
-                           0.024];      % g_LK                       
+    Param_Thalamus      = [0.034;       % g_LK
+                           0.052];      % g_h                   
 else    
-    Param_Cortex        = [6;           % sigma_e
-                           2.05;        % g_KNa
-                           20E-1];      % dphi
+    Param_Cortex        = [5.8;           % sigma_p
+                           1.8;        % g_KNa
+                           2.];          % dphi
                        
-    Param_Thalamus      = [0.048;       % g_h
-                           0.02];      % g_LK
+    Param_Thalamus      = [0.038;       % g_LK
+                           0.052];      % g_h  
 end
                         
-Connectivity            = [ 2.6;        % N_et
-                            2.6;        % N_er
-                            5;          % N_te
-                            10];        % N_ti   
+Connectivity            = [ 2.5;        % N_tp
+                            2.5;        % N_rp
+                            5;          % N_pt
+                            10];        % N_it    
 
 % stimulation parameters
 % first number is the mode of stimulation
@@ -35,27 +35,27 @@ Connectivity            = [ 2.6;        % N_et
 % 1 == semi-periodic
 % 2 == phase dependend
     
-var_stim    = [ 0;          % mode of stimulation
-                60;         % strength of the stimulus              in Hz (spikes per second)
-                120;       	% duration of the stimulus              in ms
+var_stim    = [ 2;          % mode of stimulation
+                200;         % strength of the stimulus              in Hz (spikes per second)
+                100;       	% duration of the stimulus              in ms
                 5;          % time between stimulation events       in s  (ISI)
                 0;          % range of ISI                          in s  [ISI-range,ISI+range]  
                 3;          % Number of stimuli per event
                 1050;        % time between stimuli within a event   in ms         
-                450];       % time until stimuli after minimum      in ms
+                400];       % time until stimuli after minimum      in ms
 
 T       	= 30;           % duration of the simulation
 
-[Ve, Vt, Ca, ah, Marker_Stim] = TC_mex(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
+[Vp, Vt, Ca, ah, Marker_Stim] = TC_mex(T, Param_Cortex, Param_Thalamus, Connectivity, var_stim);
 
 L        = length(Vt);
 timeaxis = linspace(0,T,L);
 
 figure(2)
-subplot(411), plot(timeaxis,Ve)
+subplot(411), plot(timeaxis,Vp)
 title('Pyramidal membrane voltage'), 
 xlabel('Time in s'), 
-ylabel('V_{e} in mV')
+ylabel('V_{p} in mV')
 xlim([0,30]);
 ylim([-80, -40]);
 % vertical line for markers
@@ -69,7 +69,7 @@ title('Thalamic relay membrane voltage'),
 xlabel('Time in s'), 
 ylabel('V_{t} in mV')
 xlim([0,30]);
-ylim([-80,-35]);
+%ylim([-80,-35]);
 % vertical line for markers
 
 

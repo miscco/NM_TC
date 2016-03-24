@@ -89,7 +89,7 @@ private:
 	int 	time_between_stimuli 	= 1050E1;
 
 	/* Threshold for phase dependent stimulation */
-	double 	threshold				= -68.5;
+	double 	threshold				= -68;
 
 	/* Internal variables */
 	/* Simulation on for TRUE and off for FALSE */
@@ -135,7 +135,7 @@ private:
 	int 	count_pause 			= 0;
 
 	/* Old voltage value for minimum detection */
-	double 	Ve_old					= 0.0;
+	double 	Vp_old					= 0.0;
 
 	/* Pointer to columns */
 	Cortical_Column* Cortex;
@@ -194,11 +194,8 @@ void Stim::setup (double* var_stim) {
 
 		/* If ISI is random create RNG */
 		if (ISI_range != 0){
-			/* Create the generator */
-			Generator = ENG(rand());
-
-			/* Combine RNG with distribution */
-			Uniform_Distribution = DIST_int(ISI-ISI_range, ISI+ISI_range);
+			/* Generate uniform distribution */
+			Uniform_Distribution = random_stream_uniform_int(ISI-ISI_range, ISI+ISI_range);
 		}
 	} else {
 		/* In case of phase dependent stimulation, time_to_stim is the time from minimum detection to start of stimulation */
@@ -236,7 +233,7 @@ void Stim::check_stim	(int time) {
 			}
 			/* After last stimulus in event update the timer with respect to (random) ISI*/
 			else {
-				time_to_stimuli += (ISI_range==0)? ISI : Uniform_Distribution(Generator);
+				time_to_stimuli += (ISI_range==0)? ISI : Uniform_Distribution();
 
 				/* Reset the stimulus counter for next stimulation event */
 				count_stimuli = 1;
@@ -248,19 +245,19 @@ void Stim::check_stim	(int time) {
 	case 2:
 		/* Search for threshold */
 		if(!stimulation_started && !minimum_found && !threshold_crossed && time>onset_correction && !stimulation_paused) {
-			if(Cortex->Ve[0]<=threshold) {
+			if(Cortex->Vp[0]<=threshold) {
 				threshold_crossed 	= true;
 			}
 		}
 
 		/* Search for minimum */
 		if(threshold_crossed) {
-			if(Cortex->Ve[0]>Ve_old) {
+			if(Cortex->Vp[0]>Vp_old) {
 				threshold_crossed 	= false;
 				minimum_found 		= true;
-				Ve_old = 0;
+				Vp_old = 0;
 			} else {
-				Ve_old = Cortex->Ve[0];
+				Vp_old = Cortex->Vp[0];
 			}
 		}
 

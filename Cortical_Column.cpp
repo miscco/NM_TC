@@ -178,9 +178,9 @@ void Cortical_Column::set_RK (int N) {
 	s_gp[N+1] = s_gp[0] + A[N] * dt*(x_gp[N]);
 	s_gi[N+1] = s_gi[0] + A[N] * dt*(x_gi[N]);
 	y	[N+1] = y	[0] + A[N] * dt*(x	 [N]);
-	x_ep[N+1] = x_ep[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ep * get_Qp(N) + N_tp * Thalamus->y[N] - s_ep[N]) - 2 * gamma_e * x_ep[N]) + noise_xRK(N, 0);
-	x_ei[N+1] = x_ei[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ei * get_Qp(N) + N_ti * Thalamus->y[N] - s_ei[N]) - 2 * gamma_e * x_ei[N]) + noise_xRK(N, 1)	;
-	x_gp[N+1] = x_gp[0] + A[N] * dt*(pow(gamma_g, 2) * (N_ip * get_Qi(N)						 - s_gp[N]) - 2 * gamma_g * x_gp[N]);
+	x_ep[N+1] = x_ep[0] + A[N] * dt*(pow(gamma_e, 2) * (N_pp * get_Qp(N) + N_pt * Thalamus->y[N] - s_ep[N]) - 2 * gamma_e * x_ep[N]) + noise_xRK(N, 0);
+	x_ei[N+1] = x_ei[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ip * get_Qp(N) + N_it * Thalamus->y[N] - s_ei[N]) - 2 * gamma_e * x_ei[N]) + noise_xRK(N, 1)	;
+	x_gp[N+1] = x_gp[0] + A[N] * dt*(pow(gamma_g, 2) * (N_pi * get_Qi(N)						 - s_gp[N]) - 2 * gamma_g * x_gp[N]);
 	x_gi[N+1] = x_gi[0] + A[N] * dt*(pow(gamma_g, 2) * (N_ii * get_Qi(N)						 - s_gi[N]) - 2 * gamma_g * x_gi[N]);
 	x	[N+1] = x	[0] + A[N] * dt*(pow(nu, 	  2) * (	   get_Qp(N)						 - y   [N])	- 2 * nu	  * x   [N]);
 }
