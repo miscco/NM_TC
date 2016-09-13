@@ -20,30 +20,20 @@
  *	THE SOFTWARE.
  *
  *	AUTHORS:	Michael Schellenberger Costa: mschellenbergercosta@gmail.com
- *
- *	Based on:	A thalamocortical neural mass model of the EEG during NREM sleep and its response
- *				to auditory stimulation.
- *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
- *				JC Claussen.
- *				PLoS Computational Biology (in review).
  */
 
-/****************************************************************************************************/
-/*									Functions for data storage										*/
-/****************************************************************************************************/
+/******************************************************************************/
+/*                        Functions for data storage                          */
+/******************************************************************************/
 #pragma once
+#include <vector>
 #include "Cortical_Column.h"
 #include "Thalamic_Column.h"
 
-/****************************************************************************************************/
-/*											Save data												*/
-/****************************************************************************************************/
-void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus, vector<double*> Data) {
-	Data[0][counter] = Cortex.Vp		[0];
-	Data[1][counter] = Thalamus.Vt		[0];
-	Data[2][counter] = Thalamus.Ca		[0];
-	Data[3][counter] = Thalamus.act_h	();
+void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus,
+              std::vector<double*> pData) {
+    pData[0][counter] = Cortex.Vp		[0];
+    pData[1][counter] = Thalamus.Vt		[0];
+    pData[2][counter] = Thalamus.Ca		[0];
+    pData[3][counter] = Thalamus.act_h	();
 }
-/****************************************************************************************************/
-/*										 		end													*/
-/****************************************************************************************************/

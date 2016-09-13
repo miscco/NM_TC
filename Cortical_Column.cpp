@@ -29,189 +29,146 @@
  *				to auditory stimulation.
  *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
  *				JC Claussen.
- *				PLoS Computational Biology (in review).
+ *				PLoS Computational Biology http://dx.doi.org/10.1371/journal.pcbi.1005022
  */
 
-/****************************************************************************************************/
-/*									Functions of the cortical module								*/
-/****************************************************************************************************/
+/******************************************************************************/
+/*							Functions of the cortical module				  */
+/******************************************************************************/
 #include "Cortical_Column.h"
 
-/****************************************************************************************************/
-/*										 Initialization of RNG 										*/
-/****************************************************************************************************/
+/******************************************************************************/
+/*							Initialization of RNG 							  */
+/******************************************************************************/
 void Cortical_Column::set_RNG(void) {
-	extern const double dt;
-	/* Number of independent random variables */
-	int N = 2;
+    extern const double dt;
+    unsigned numRandomVariables = 2;
 
-	/* Create RNG for each stream */
-	for (int i=0; i<N; ++i){
-		/* Add the RNG for I_{l}*/
-		MTRands.push_back(random_stream_normal(0.0, dphi*dt));
+    MTRands.reserve(2*numRandomVariables);
+    Rand_vars.reserve(2*numRandomVariables);
+    for (unsigned i=0; i < numRandomVariables; ++i){
+        /* Add the RNG for I_{l}*/
+        MTRands.push_back(random_stream_normal(0.0, dphi*dt));
 
-		/* Add the RNG for I_{l,0} */
-		MTRands.push_back(random_stream_normal(0.0, dt));
+        /* Add the RNG for I_{l,0} */
+        MTRands.push_back(random_stream_normal(0.0, dt));
 
-		/* Get the random number for the first iteration */
-		Rand_vars.push_back(MTRands[2*i]());
-		Rand_vars.push_back(MTRands[2*i+1]());
-	}
+        /* Get the random number for the first iteration */
+        Rand_vars.push_back(MTRands[2*i]());
+        Rand_vars.push_back(MTRands[2*i+1]());
+    }
 }
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
 
+/******************************************************************************/
+/*                          RK noise scaling 								  */
+/******************************************************************************/
+double Cortical_Column::noise_xRK(int N, int M) const{
+    return gamma_e * gamma_e * (Rand_vars[2*M] + Rand_vars[2*M+1]/std::sqrt(3))*B[N];
+}
 
-/****************************************************************************************************/
-/*										 Firing Rate functions 										*/
-/****************************************************************************************************/
+double Cortical_Column::noise_aRK(int M) const{
+    return gamma_e * gamma_e * (Rand_vars[2*M] - Rand_vars[2*M+1]*std::sqrt(3))/4;
+}
+
+/******************************************************************************/
+/*                          Firing Rate functions 							  */
+/******************************************************************************/
 /* Pyramidal firing rate */
 double Cortical_Column::get_Qp	(int N) const{
-	double q = Qp_max / (1 + exp(-C1 * (Vp[N] - theta_p) / sigma_p));
-	return q;
+    return Qp_max / (1 + exp(-C1 * (Vp[N] - theta_p) / sigma_p));
 }
 
 /* Inhibitory firing rate */
 double Cortical_Column::get_Qi	(int N) const{
-	double q = Qi_max / (1 + exp(-C1 * (Vi[N] - theta_i) / sigma_i));
-	return q;
+    return Qi_max / (1 + exp(-C1 * (Vi[N] - theta_i) / sigma_i));
 }
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
 
-
-/****************************************************************************************************/
-/*										Synaptic currents											*/
-/****************************************************************************************************/
+/******************************************************************************/
+/*							Synaptic currents								  */
+/******************************************************************************/
 /* Excitatory input to pyramidal population */
-double Cortical_Column::I_ep	(int N) const{
-	double I = g_AMPA * s_ep[N] * (Vp[N] - E_AMPA);
-	return I;
+double Cortical_Column::I_ep (int N) const{
+    return g_AMPA * s_ep[N] * (Vp[N] - E_AMPA);
 }
 
 /* Inhibitory input to pyramidal population */
-double Cortical_Column::I_gp	(int N) const{
-	double I = g_GABA * s_gp[N] * (Vp[N] - E_GABA);
-	return I;
+double Cortical_Column::I_gp (int N) const{
+    return g_GABA * s_gp[N] * (Vp[N] - E_GABA);
 }
 /* Excitatory input to inhibitory population */
-double Cortical_Column::I_ei	(int N) const{
-	double I = g_AMPA * s_ei[N] * (Vi[N] - E_AMPA);
-	return I;
+double Cortical_Column::I_ei (int N) const{
+    return g_AMPA * s_ei[N] * (Vi[N] - E_AMPA);
 }
 
 /* Inhibitory input to inhibitory population */
-double Cortical_Column::I_gi	(int N) const{
-	double I = g_GABA * s_gi[N] * (Vi[N] - E_GABA);
-	return I;
+double Cortical_Column::I_gi (int N) const{
+    return g_GABA * s_gi[N] * (Vi[N] - E_GABA);
 }
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
 
-
-/****************************************************************************************************/
-/*										 Current functions 											*/
-/****************************************************************************************************/
+/******************************************************************************/
+/*							Intrinsic currents                                */
+/******************************************************************************/
 /* Leak current of pyramidal population */
-double Cortical_Column::I_L_p	(int N) const{
-	double I = g_L * (Vp[N] - E_L_p);
-	return I;
+double Cortical_Column::I_L_p (int N) const{
+    return g_L * (Vp[N] - E_L_p);
 }
 
 /* Leak current of inhibitory population */
-double Cortical_Column::I_L_g	(int N) const{
-	double I = g_L * (Vi[N] - E_L_g);
-	return I;
+double Cortical_Column::I_L_i (int N) const{
+    return g_L * (Vi[N] - E_L_i);
 }
 
 /* Sodium dependent potassium current */
-double Cortical_Column::I_KNa		(int N)  const{
-	double w_KNa  = 0.37/(1+pow(38.7/Na[N], 3.5));
-	double I_KNa  = g_KNa * w_KNa * (Vp[N] - E_K);
-	return I_KNa;
-}
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
-
-
-/****************************************************************************************************/
-/*									 		Potassium pump	 										*/
-/****************************************************************************************************/
-double Cortical_Column::Na_pump		(int N) const{
-	double Na_pump = R_pump*(Na[N]*Na[N]*Na[N]/(Na[N]*Na[N]*Na[N]+3375) - Na_eq*Na_eq*Na_eq/(Na_eq*Na_eq*Na_eq+3375));
-	return Na_pump;
-}
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
-
-
-/****************************************************************************************************/
-/*										 RK noise scaling 											*/
-/****************************************************************************************************/
-double Cortical_Column::noise_xRK(int N, int M) const{
-	return gamma_e * gamma_e * (Rand_vars[2*M] + Rand_vars[2*M+1]/std::sqrt(3))*B[N];
+double Cortical_Column::I_KNa (int N)  const{
+    double w_KNa  = 0.37/(1+pow(38.7/Na[N], 3.5));
+    return g_KNa * w_KNa * (Vp[N] - E_K);
 }
 
-double Cortical_Column::noise_aRK(int M) const{
-	return gamma_e * gamma_e * (Rand_vars[2*M] - Rand_vars[2*M+1]*std::sqrt(3))/4;
+/******************************************************************************/
+/*							Potassium pump	 								  */
+/******************************************************************************/
+double Cortical_Column::Na_pump (int N) const{
+    return R_pump*(Na[N]*Na[N]*Na[N]/(Na[N]*Na[N]*Na[N]+3375) -
+                   Na_eq*Na_eq*Na_eq/(Na_eq*Na_eq*Na_eq+3375));
 }
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
 
-
-/****************************************************************************************************/
-/*										Calculate the Nth SRK term									*/
-/****************************************************************************************************/
+/******************************************************************************/
+/*                              SRK iteration                                 */
+/******************************************************************************/
 void Cortical_Column::set_RK (int N) {
-	extern const double dt;
-	Vp	[N+1] = Vp  [0] + A[N] * dt*(-(I_L_p(N) + I_ep(N) + I_gp(N))/tau_p - I_KNa(N));
-	Vi	[N+1] = Vi  [0] + A[N] * dt*(-(I_L_g(N) + I_ei(N) + I_gi(N))/tau_i);
-	Na	[N+1] = Na  [0] + A[N] * dt*(alpha_Na * get_Qp(N) - Na_pump(N))/tau_Na;
-	s_ep[N+1] = s_ep[0] + A[N] * dt*(x_ep[N]);
-	s_ei[N+1] = s_ei[0] + A[N] * dt*(x_ei[N]);
-	s_gp[N+1] = s_gp[0] + A[N] * dt*(x_gp[N]);
-	s_gi[N+1] = s_gi[0] + A[N] * dt*(x_gi[N]);
-	y	[N+1] = y	[0] + A[N] * dt*(x	 [N]);
-	x_ep[N+1] = x_ep[0] + A[N] * dt*(pow(gamma_e, 2) * (N_pp * get_Qp(N) + N_pt * Thalamus->y[N] - s_ep[N]) - 2 * gamma_e * x_ep[N]) + noise_xRK(N, 0);
-	x_ei[N+1] = x_ei[0] + A[N] * dt*(pow(gamma_e, 2) * (N_ip * get_Qp(N) + N_it * Thalamus->y[N] - s_ei[N]) - 2 * gamma_e * x_ei[N]) + noise_xRK(N, 1)	;
-	x_gp[N+1] = x_gp[0] + A[N] * dt*(pow(gamma_g, 2) * (N_pi * get_Qi(N)						 - s_gp[N]) - 2 * gamma_g * x_gp[N]);
-	x_gi[N+1] = x_gi[0] + A[N] * dt*(pow(gamma_g, 2) * (N_ii * get_Qi(N)						 - s_gi[N]) - 2 * gamma_g * x_gi[N]);
-	x	[N+1] = x	[0] + A[N] * dt*(pow(nu, 	  2) * (	   get_Qp(N)						 - y   [N])	- 2 * nu	  * x   [N]);
+    extern const double dt;
+    Vp	[N+1] = Vp  [0] + A[N] * dt*(-(I_L_p(N) + I_ep(N) + I_gp(N))/tau_p - I_KNa(N));
+    Vi	[N+1] = Vi  [0] + A[N] * dt*(-(I_L_i(N) + I_ei(N) + I_gi(N))/tau_i);
+    Na	[N+1] = Na  [0] + A[N] * dt*(alpha_Na * get_Qp(N) - Na_pump(N))/tau_Na;
+    s_ep[N+1] = s_ep[0] + A[N] * dt*(x_ep[N]);
+    s_ei[N+1] = s_ei[0] + A[N] * dt*(x_ei[N]);
+    s_gp[N+1] = s_gp[0] + A[N] * dt*(x_gp[N]);
+    s_gi[N+1] = s_gi[0] + A[N] * dt*(x_gi[N]);
+    y	[N+1] = y	[0] + A[N] * dt*(x	 [N]);
+    x_ep[N+1] = x_ep[0] + A[N] * dt*(gamma_e*gamma_e * (N_pp * get_Qp(N) + N_pt * Thalamus->y[N] - s_ep[N]) - 2 * gamma_e * x_ep[N]) + noise_xRK(N, 0);
+    x_ei[N+1] = x_ei[0] + A[N] * dt*(gamma_e*gamma_e * (N_ip * get_Qp(N) + N_it * Thalamus->y[N] - s_ei[N]) - 2 * gamma_e * x_ei[N]) + noise_xRK(N, 1)	;
+    x_gp[N+1] = x_gp[0] + A[N] * dt*(gamma_g*gamma_g * (N_pi * get_Qi(N)						 - s_gp[N]) - 2 * gamma_g * x_gp[N]);
+    x_gi[N+1] = x_gi[0] + A[N] * dt*(gamma_g*gamma_g * (N_ii * get_Qi(N)						 - s_gi[N]) - 2 * gamma_g * x_gi[N]);
+    x	[N+1] = x	[0] + A[N] * dt*(nu * nu         * (	   get_Qp(N)						 - y   [N])	- 2 * nu	  * x   [N]);
 }
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/
 
-
-/****************************************************************************************************/
-/*									Function that adds all SRK terms								*/
-/****************************************************************************************************/
 void Cortical_Column::add_RK(void) {
-	Vp	[0] = (-3*Vp  [0] + 2*Vp  [1] + 4*Vp  [2] + 2*Vp  [3] + Vp	[4])/6;
-	Vi	[0] = (-3*Vi  [0] + 2*Vi  [1] + 4*Vi  [2] + 2*Vi  [3] + Vi	[4])/6;
-	Na	[0] = (-3*Na  [0] + 2*Na  [1] + 4*Na  [2] + 2*Na  [3] + Na	[4])/6;
-	s_ep[0] = (-3*s_ep[0] + 2*s_ep[1] + 4*s_ep[2] + 2*s_ep[3] + s_ep[4])/6;
-	s_ei[0] = (-3*s_ei[0] + 2*s_ei[1] + 4*s_ei[2] + 2*s_ei[3] + s_ei[4])/6;
-	s_gp[0] = (-3*s_gp[0] + 2*s_gp[1] + 4*s_gp[2] + 2*s_gp[3] + s_gp[4])/6;
-	s_gi[0] = (-3*s_gi[0] + 2*s_gi[1] + 4*s_gi[2] + 2*s_gi[3] + s_gi[4])/6;
-	y	[0] = (-3*y	  [0] + 2*y	  [1] + 4*y   [2] + 2*y	  [3] + y	[4])/6;
-	x_ep[0] = (-3*x_ep[0] + 2*x_ep[1] + 4*x_ep[2] + 2*x_ep[3] + x_ep[4])/6 + noise_aRK(0);
-	x_ei[0] = (-3*x_ei[0] + 2*x_ei[1] + 4*x_ei[2] + 2*x_ei[3] + x_ei[4])/6 + noise_aRK(1);
-	x_gp[0] = (-3*x_gp[0] + 2*x_gp[1] + 4*x_gp[2] + 2*x_gp[3] + x_gp[4])/6;
-	x_gi[0] = (-3*x_gi[0] + 2*x_gi[1] + 4*x_gi[2] + 2*x_gi[3] + x_gi[4])/6;
-	x	[0] = (-3*x	  [0] + 2*x	  [1] + 4*x   [2] + 2*x	  [3] + x	[4])/6;
+    add_RK(Vp);
+    add_RK(Vi);
+    add_RK(Na);
+    add_RK(s_ep);
+    add_RK(s_ei);
+    add_RK(s_gp);
+    add_RK(s_gi);
+    add_RK(y);
+    add_RK_noise(x_ep, 0);
+    add_RK_noise(x_ei, 1);
+    add_RK(x_gp);
+    add_RK(x_gi);
+    add_RK(x);
 
-	/* Generate noise for the next iteration */
-	for (unsigned i=0; i<Rand_vars.size(); ++i) {
-		Rand_vars[i] = MTRands[i]() + input;
-	}
+    /* Generate noise for the next iteration */
+    for (unsigned i=0; i<Rand_vars.size(); ++i) {
+        Rand_vars[i] = MTRands[i]() + input;
+    }
 }
-/****************************************************************************************************/
-/*										 		end			 										*/
-/****************************************************************************************************/

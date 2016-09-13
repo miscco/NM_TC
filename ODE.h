@@ -25,30 +25,24 @@
  *				to auditory stimulation.
  *				M Schellenberger Costa, A Weigenand, H-VV Ngo, L Marshall, J Born, T Martinetz,
  *				JC Claussen.
- *				PLoS Computational Biology (in review).
+ *				PLoS Computational Biology http://dx.doi.org/10.1371/journal.pcbi.1005022
  */
 
-/****************************************************************************************************/
-/*									Implementation of the ODE solver								*/
-/****************************************************************************************************/
+/******************************************************************************/
+/*                        Functions for SRK iteration                         */
+/******************************************************************************/
 #pragma once
 #include "Cortical_Column.h"
 #include "Thalamic_Column.h"
 
-/****************************************************************************************************/
-/*										Evaluation of SRK4											*/
-/****************************************************************************************************/
 void ODE(Cortical_Column& Cortex, Thalamic_Column& Thalamus) {
-	/* First calculate every ith RK moment. Has to be in order, 1th moment first */
-	for (int i=0; i<4; ++i) {
-		Cortex.set_RK(i);
-		Thalamus.set_RK(i);
-	}
+    /* First calculate every ith RK moment. Has to be in order, 1th moment first */
+    for (unsigned i=0; i<4; ++i) {
+        Cortex.set_RK(i);
+        Thalamus.set_RK(i);
+    }
 
-	/* Add all moments */
-	Cortex.add_RK();
-	Thalamus.add_RK();
+    /* Add all moments */
+    Cortex.add_RK();
+    Thalamus.add_RK();
 }
-/****************************************************************************************************/
-/*										 		end													*/
-/****************************************************************************************************/

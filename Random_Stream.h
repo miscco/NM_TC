@@ -23,58 +23,34 @@
  *              Stefanie Gareis: gareis@inb.uni-luebeck.de
  */
 
-/****************************************************************************************************/
-/*                                       Random number streams                                      */
-/****************************************************************************************************/
+/******************************************************************************/
+/*                          Random number streams                             */
+/******************************************************************************/
 #pragma once
 #include <random>
 
-/****************************************************************************************************/
-/*									Struct for normal distribution                                  */
-/****************************************************************************************************/
-struct random_stream_normal
-{
-    /* Random number engine: Mersenne-Twister */
+class random_stream_normal {
+public:
+    explicit random_stream_normal(double mean, double stddev)
+    : mt(rand()), norm_dist(mean, stddev) {}
+    explicit random_stream_normal(double mean, double stddev, double seed)
+    : mt(seed), norm_dist(mean, stddev) {}
+
+    double operator ()(void) { return norm_dist(mt); }
+private:
     std::mt19937_64                     mt;
-    /* Random number generator: Normal-distribution */
     std::normal_distribution<double>    norm_dist;
-
-    /* Constructors */
-    random_stream_normal(){}
-    random_stream_normal(double mean, double stddev)
-    : mt(rand()) , norm_dist(mean, stddev)
-    {}
-
-    /* Overwrites the function-call operator "( )" */
-    double operator( )(void) {
-        return norm_dist(mt);
-    }
 };
-/****************************************************************************************************/
-/*										 		end													*/
-/****************************************************************************************************/
 
-/****************************************************************************************************/
-/*									Struct for uniform int distribution                             */
-/****************************************************************************************************/
-struct random_stream_uniform_int
-{
-    /* Random number engine: Mersenne-Twister */
+class random_stream_uniform_int {
+public:
+    explicit random_stream_uniform_int(int lower_bound, int upper_bound)
+    : mt(rand()), uniform_dist(lower_bound, upper_bound) {}
+    explicit random_stream_uniform_int(int lower_bound, int upper_bound, double seed)
+    : mt(seed), uniform_dist(lower_bound, upper_bound) {}
+
+    double operator ()(void) { return uniform_dist(mt); }
+private:
     std::mt19937_64                     mt;
-    /* Random number generator: Uniform integer-distribution */
     std::uniform_int_distribution<>     uniform_dist;
-
-    /* Constructors */
-    random_stream_uniform_int(){}
-    random_stream_uniform_int(double lower_bound, double upper_bound)
-    : mt(rand()) , uniform_dist(lower_bound, upper_bound)
-    {}
-
-    /* Overwrites the function-call operator "( )" */
-    double operator( )(void) {
-        return uniform_dist(mt);
-    }
 };
-/****************************************************************************************************/
-/*										 		end													*/
-/****************************************************************************************************/
