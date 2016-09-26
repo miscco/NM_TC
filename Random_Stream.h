@@ -29,11 +29,11 @@
 #pragma once
 #include <random>
 
-class random_stream_normal {
+class randomStreamNormal {
 public:
-    explicit random_stream_normal(double mean, double stddev)
+    explicit randomStreamNormal(double mean, double stddev)
     : mt(rand()), norm_dist(mean, stddev) {}
-    explicit random_stream_normal(double mean, double stddev, double seed)
+    explicit randomStreamNormal(double mean, double stddev, double seed)
     : mt(seed), norm_dist(mean, stddev) {}
 
     double operator ()(void) { return norm_dist(mt); }
@@ -42,14 +42,14 @@ private:
     std::normal_distribution<double>    norm_dist;
 };
 
-class random_stream_uniform_int {
+class randomStreamUniformInt {
 public:
-    explicit random_stream_uniform_int(int lower_bound, int upper_bound)
+    explicit randomStreamUniformInt(int lower_bound, int upper_bound)
     : mt(rand()), uniform_dist(lower_bound, upper_bound) {}
-    explicit random_stream_uniform_int(int lower_bound, int upper_bound, double seed)
+    explicit randomStreamUniformInt(int lower_bound, int upper_bound, double seed)
     : mt(seed), uniform_dist(lower_bound, upper_bound) {}
 
-    double operator ()(void) { return uniform_dist(mt); }
+    int operator ()(void) { return uniform_dist(mt); }
 private:
     std::mt19937_64                     mt;
     std::uniform_int_distribution<>     uniform_dist;

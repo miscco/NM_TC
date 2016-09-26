@@ -170,7 +170,7 @@ private:
     const std::vector<double> B = {0.75, 0.75, 0.0, 0.0};
 
     /* Random number generators */
-    std::vector<random_stream_normal> MTRands;
+    std::vector<randomStreamNormal> MTRands;
 
     /* Container for noise */
     std::vector<double>	Rand_vars;

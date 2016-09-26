@@ -141,7 +141,7 @@ private:
     std::vector<int>		marker_stimulation;
 
     /* Random number generator in case of semi-periodic stimulation */
-    random_stream_uniform_int Uniform_Distribution = random_stream_uniform_int(0, 0);
+    randomStreamUniformInt Uniform_Distribution = randomStreamUniformInt(0, 0);
 
     /* Create MATLAB container for marker storage */
     friend mxArray* get_marker(Stim &stim);
@@ -190,7 +190,7 @@ void Stim::setup (double* var_stim) {
         /* If ISI is random create RNG */
         if (ISI_range != 0){
             /* Generate uniform distribution */
-            Uniform_Distribution = random_stream_uniform_int(ISI-ISI_range, ISI+ISI_range);
+            Uniform_Distribution = randomStreamUniformInt(ISI-ISI_range, ISI+ISI_range);
         }
     } else {
         /* In case of phase dependent stimulation, time_to_stim is the time from minimum detection to start of stimulation */
