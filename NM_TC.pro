@@ -3,7 +3,7 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-TARGET = TC.cpp
+TARGET = release_binary
 
 SOURCES +=  Cortical_Column.cpp \
 			TC.cpp				\
