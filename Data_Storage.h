@@ -31,7 +31,7 @@
 #include "Thalamic_Column.h"
 
 void get_data(int counter, Cortical_Column& Cortex, Thalamic_Column& Thalamus,
-              std::vector<double*> pData) {
+              std::vector<double*>& pData) {
     pData[0][counter] = Cortex.Vp		[0];
     pData[1][counter] = Thalamus.Vt		[0];
     pData[2][counter] = Thalamus.Ca		[0];
