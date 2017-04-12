@@ -191,7 +191,7 @@ private:
                         x	= init(0.0);	/* derivative of y									*/
 
     /* Data storage access */
-    friend void get_data (int, Cortical_Column&, Thalamic_Column&, std::vector<double*>);
+    friend void get_data (int, Cortical_Column&, Thalamic_Column&, std::vector<double*>&);
 
     /* Stimulation protocol access */
     friend class Stim;
