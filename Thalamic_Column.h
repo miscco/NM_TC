@@ -239,7 +239,7 @@ private:
                         m_h2	= init(0.0);		/* activation 	of h   channel bound with protein 	*/
 
     /* Data storage  access */
-    friend void get_data (int, Cortical_Column&, Thalamic_Column&, std::vector<double*>);
+    friend void get_data (int, Cortical_Column&, Thalamic_Column&, std::vector<double*>&);
     friend class Cortical_Column;
 };
 /****************************************************************************************************/
