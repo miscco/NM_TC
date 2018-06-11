@@ -112,11 +112,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     }
 
     /* Return the data containers */
-    nlhs = dataArray.size()+1;
+    size_t numOutputs = 0;
     for (auto &dataptr : dataArray) {
-        plhs[std::distance(&dataptr, dataArray.data())] = dataptr;
+        plhs[numOutputs++] = dataptr;
     }
-    plhs[dataArray.size()] = get_marker(Stimulation);
+    plhs[numOutputs++] = get_marker(Stimulation);
 
     return;
 }
@@ -128,7 +128,7 @@ mxArray* GetMexArray(int N, int M) {
     mxArray* Array	= mxCreateDoubleMatrix(0, 0, mxREAL);
     mxSetM(Array, N);
     mxSetN(Array, M);
-    {mxSetData(Array, mxMalloc(sizeof(double)*M*N));}
+    mxSetData(Array, mxMalloc(sizeof(double)*M*N));
     return Array;
 }
 
